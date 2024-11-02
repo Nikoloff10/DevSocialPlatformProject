@@ -1,0 +1,33 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Manage Job Posts</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'job_posts/manage_job_posts.css' %}">
+</head>
+<body>
+<div class="manage-job-container">
+    <h1>Manage Your Job Posts</h1>
+    <div class="job-posts">
+        {% for post in user.jobpost_set.all %}
+            <div class="job-post">
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.description }}</p>
+                <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
+                <p><strong>Posted on:</strong> {{ post.created_at }}</p>
+                <button class="detail-job-button" onclick="location.href='/job-post/{{ post.id }}'">View Details</button>
+                <form method="post" action="{% url 'delete_job_post' post.id %}">
+                    {% csrf_token %}
+                    <button class="delete-job-button" type="submit">Delete</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+    <button class="back-profile" onclick="location.href='/profile'">Back to Profile</button>
+</div>
+</body>
+</html>

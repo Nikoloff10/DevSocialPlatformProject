@@ -21,20 +21,18 @@
         <div class="form-group">
             {{ form.password.label_tag }}
             {{ form.password }}
-            {% if form.non_field_errors %}
-            {% endif %}
-                <div class="error-message">
-                    {{ form.non_field_errors }}
-                </div>
         </div>
+        {% if form.non_field_errors %}
+            <div class="error-message">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
         <button type="submit">Login</button>
     </form>
-    {% if form.non_field_errors %}
-        <div class="register-suggestion">
-            <p>Maybe you don't have an account?</p>
-            <button onclick="location.href='{% url 'register' %}'" class="btn btn-primary">Register</button>
-        </div>
-    {% endif %}
+    <div class="register-suggestion">
+        <p>Maybe you don't have an account?</p>
+        <button onclick="location.href='{% url 'register' %}'" class="btn btn-primary">Register</button>
+    </div>
 </div>
 </body>
 </html>

@@ -16,7 +16,6 @@
     <form action="/profile" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
-
             <label for="id_avatar" class="custom-file-upload">Choose Avatar Pic</label>
             <p>{{ form.avatar }}</p>
         </div>
@@ -45,13 +44,12 @@
         <button type="submit" name="delete_profile">Delete Profile</button>
     </form>
     <button type="button" onclick="location.href='/reset-password'">Reset Password</button>
+    <button onclick="location.href='/manage-job-posts'">Manage Job Posts</button>
 </div>
-
 <script>
     function confirmDeleteProfile() {
         return confirm("Are you sure you want to delete your profile?");
     }
-
     document.getElementById('id_avatar').addEventListener('change', function(event) {
         const [file] = event.target.files;
         if (file) {

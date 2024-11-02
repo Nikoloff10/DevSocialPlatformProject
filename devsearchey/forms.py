@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 
-from devsearchey.models import Profile
+from devsearchey.models import Profile, JobPost
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -71,3 +71,14 @@ class ProfileForm(forms.ModelForm):
         'github': 'Github',
         'website': 'Website'
     }
+
+
+class JobPostForm(forms.ModelForm):
+    class Meta:
+        model = JobPost
+        fields = ['post_type', 'title', 'description']
+        widgets = {
+            'post_type': forms.Select(),
+            'title': forms.TextInput(attrs={'placeholder': 'Title'}),
+            'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Description', 'maxlength': 200}),
+        }
