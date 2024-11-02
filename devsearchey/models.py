@@ -4,8 +4,7 @@ from django.db import models
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(default='no bio...')
-    avatar = models.ImageField(default='default.jpg', upload_to='avatars/')
-    email = models.EmailField(unique=True)
+    avatar = models.ImageField(default='avatars/default.jpg', upload_to='avatars/')
     github = models.URLField(blank=True)
     website = models.URLField(blank=True)
 

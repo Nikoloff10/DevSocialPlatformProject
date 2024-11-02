@@ -1,3 +1,50 @@
+{#{% load static %}#}
+{#<!doctype html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport"#}
+{#          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">#}
+{#    <meta http-equiv="X-UA-Compatible" content="ie=edge">#}
+{#    <title>Profile</title>#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'profile/styles.css' %}">#}
+{#</head>#}
+{#<body>#}
+{#<div class="container">#}
+{#    <h1>Profile</h1>#}
+{#    <form action="/profile" method="post" enctype="multipart/form-data">#}
+{#        {% csrf_token %}#}
+{#        <div class="form-group">#}
+{#            {{ form.avatar.label_tag }}#}
+{#            <img src="{{ avatar_url }}" alt="Avatar Preview" style="width: 100px; height: 100px; margin-bottom: 10px;"/>#}
+{#            <label for="id_avatar" class="custom-file-upload">Choose Avatar</label>#}
+{#            {{ form.avatar }}#}
+{#        </div>#}
+{#        {% for field in form %}#}
+{#            {% if field.name != 'avatar' %}#}
+{#                <div class="form-group">#}
+{#                    {{ field.label_tag }}#}
+{#                    {{ field }}#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#        <button type="submit">Update</button>#}
+{#    </form>#}
+{#    <form method="post" style="margin-top: 20px;" onsubmit="return confirmDeleteProfile();">#}
+{#        {% csrf_token %}#}
+{#        <button type="submit" name="delete_profile">Delete Profile</button>#}
+{#    </form>#}
+{#</div>#}
+{##}
+{#<script>#}
+{#    function confirmDeleteProfile() {#}
+{#        return confirm("Are you sure you want to delete your profile?");#}
+{#    }#}
+{#</script>#}
+{#</body>#}
+{#</html>#}
+
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,21 +53,46 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'profile/styles.css' %}">
+</head>
 <body>
-<form action="/profile" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update</button>
-</form>
-<form method="post" style="margin-top: 20px;" onsubmit="return confirmDeleteProfile();">
-    {% csrf_token %}
-    <button type="submit" name="delete_profile" style="background-color: red; color: white;">Delete Profile</button>
-</form>
+<div class="container">
+    <h1>Profile</h1>
+    <form action="/profile" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.avatar.label_tag }}
+            <img id="avatarPreview" src="{{ avatar_url }}" alt="Avatar Preview" style="width: 100px; height: 100px; margin-bottom: 10px;"/>
+            <label for="id_avatar" class="custom-file-upload">Choose Avatar</label>
+            {{ form.avatar }}
+        </div>
+        {% for field in form %}
+            {% if field.name != 'avatar' %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endif %}
+        {% endfor %}
+        <button type="submit">Update</button>
+    </form>
+    <form method="post" style="margin-top: 20px;" onsubmit="return confirmDeleteProfile();">
+        {% csrf_token %}
+        <button type="submit" name="delete_profile">Delete Profile</button>
+    </form>
+</div>
 
 <script>
     function confirmDeleteProfile() {
         return confirm("Are you sure you want to delete your profile?");
     }
+
+    document.getElementById('id_avatar').addEventListener('change', function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            document.getElementById('avatarPreview').src = URL.createObjectURL(file);
+        }
+    });
 </script>
 </body>
 </html>

@@ -39,17 +39,23 @@ def logout_view(request):
     return redirect('home')
 
 
+
+
+
+
 def profile_view(request):
     if request.method == 'POST':
         if 'delete_profile' in request.POST:
-            user = request.user
-            user.profile.delete()
-            user.delete()
+            request.user.profile.delete()
+            request.user.delete()
             return redirect('home')
-        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
+        else:
+            form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+            if form.is_valid():
+                form.save()
+                return redirect('home')
     else:
         form = ProfileForm(instance=request.user.profile)
-    return render(request, 'profile.html', {'form': form})
+
+    avatar_url = form.instance.avatar.url if form.instance.avatar else '/media/avatars/default.jpg'
+    return render(request, 'profile.html', {'form': form, 'avatar_url': avatar_url})

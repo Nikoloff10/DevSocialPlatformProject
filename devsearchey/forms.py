@@ -9,7 +9,7 @@ class UserRegistrationForm(forms.ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput())
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username','first_name', 'last_name', 'email', 'password']
         widgets = {
 
             'password': forms.PasswordInput()
@@ -17,6 +17,8 @@ class UserRegistrationForm(forms.ModelForm):
 
         placeholders = {
             'username': 'Username',
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
             'email': 'Email',
             'password': 'Password',
             'confirm_password': 'Confirm Password'
@@ -46,20 +48,26 @@ class UserLoginForm(forms.Form):
 
 
 
+
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['bio', 'avatar', 'github', 'website']
         widgets = {
-            'bio': forms.Textarea(attrs={'rows': 5}),
-            'avatar': forms.FileInput(),
+            'bio': forms.Textarea(attrs={'rows': 5, 'placeholder': 'no bio...'}),
+            'avatar': forms.FileInput(attrs={'class': 'custom-file-input'}),
             'github': forms.TextInput(),
-            'website': forms.TextInput()
+            'website': forms.TextInput(),
         }
 
-        placeholders = {
-            'bio': 'Bio',
-            'avatar': 'Avatar',
-            'github': 'Github',
-            'website': 'Website'
-        }
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    placeholders = {
+        'bio': 'Bio',
+        'avatar': 'Avatar',
+        'github': 'Github',
+        'website': 'Website'
+    }
