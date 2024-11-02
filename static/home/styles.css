@@ -78,9 +78,12 @@ button[name="delete_profile"] {
 .avatar-image {
 
     margin-bottom: 40px;
-    max-width: 400px;
-    max-height: 400px;
-    border-radius: 25px;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+
+    border-radius: 94%;
+
 }
 
 .profile-button, .logout-button {
