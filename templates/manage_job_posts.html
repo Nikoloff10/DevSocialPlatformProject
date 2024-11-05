@@ -13,7 +13,7 @@
 <div class="manage-job-container">
     <h1>Manage Your Job Posts</h1>
     <div class="job-posts">
-        {% for post in user.jobpost_set.all %}
+        {% for post in job_posts %}
             <div class="job-post">
                 <h3>{{ post.title }}</h3>
                 <p>{{ post.description }}</p>

@@ -1,10 +1,10 @@
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 from devsearchey.forms import UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
-from devsearchey.models import JobPost
-
+from devsearchey.models import JobPost, Profile
 
 
 def home_view(request):
@@ -93,7 +93,32 @@ def delete_job_post_view(request, post_id):
 
 @login_required
 def manage_job_posts_view(request):
-    return render(request, 'manage_job_posts.html')
+    job_posts = JobPost.objects.filter(user=request.user)
+    return render(request, 'manage_job_posts.html', {'job_posts': job_posts})
+
+
+@login_required
+def bookmark_post_view(request, post_id):
+    post = get_object_or_404(JobPost, id=post_id)
+    profile = request.user.profile
+
+    if post in profile.bookmarked_posts.all():
+        profile.bookmarked_posts.remove(post)
+        action = 'removed'
+    else:
+        profile.bookmarked_posts.add(post)
+        action = 'added'
+
+    post.bookmark_count = post.bookmarked_by.count()
+    post.save()
+
+    return JsonResponse({'action': action, 'bookmark_count': post.bookmark_count})
+
+@login_required
+def get_bookmarks_view(request):
+    bookmarks = request.user.profile.bookmarked_posts.all()
+    bookmarks_data = [{'id': post.id, 'title': post.title} for post in bookmarks]
+    return JsonResponse({'bookmarks': bookmarks_data})
 
 
 
