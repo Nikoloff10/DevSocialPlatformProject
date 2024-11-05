@@ -25,6 +25,12 @@ class JobPost(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username} - {self.title}"
+
+
+
+
+

@@ -6,17 +6,22 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Job Post Details</title>
+    <title>{{ post.title }}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'job_posts/job_post_detail.css' %}">
 </head>
 <body>
-<div class="detail-job-container">
-    <h1>{{ post.title }}</h1>
-    <p>{{ post.description }}</p>
-    <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
-    <p><strong>Posted by:</strong> {{ post.user.username }}</p>
-    <p><strong>Posted on:</strong> {{ post.created_at }}</p>
-    <button onclick="location.href='/profile'">Back to Profile</button>
+<div class="container">
+    <div class="job-post-detail">
+        <h1>{{ post.title }}</h1>
+        <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
+        <p><strong>Posted by:</strong> {{ post.user.username }}</p>
+        <p><strong>Description:</strong> {{ post.description }}</p>
+        
+        <p><strong>Posted on:</strong> {{ post.created_at }}</p>
+        <p><strong>Views:</strong> {{ post.views }}</p>
+        
+        <button onclick="location.href='/'">Back to Home</button>
+    </div>
 </div>
 </body>
 </html>

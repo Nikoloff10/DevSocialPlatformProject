@@ -13,4 +13,5 @@ urlpatterns = [
     path('job-post/<int:post_id>', job_post_detail_view, name='job_post_detail'),
     path('delete-job-post/<int:post_id>', delete_job_post_view, name='delete_job_post'),
     path('manage-job-posts', manage_job_posts_view, name='manage_job_posts'),
+    path('job-post/<int:post_id>/', job_post_detail_view, name='job_post_detail'),
 ]

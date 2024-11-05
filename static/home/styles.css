@@ -15,9 +15,14 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    overflow-y: auto;
 }
 
 .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     width: 90%;
     max-width: 1200px;
     background-color: #fff;
@@ -25,14 +30,24 @@ body {
     text-align: center;
     padding: 20px;
     overflow: hidden;
+    height: 80vh;
 }
 
 h1 {
     margin-bottom: 20px;
 }
 
+.welcome-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    overflow: hidden;
+}
+
 .welcome-message .welcome-user {
-    margin-bottom: 10vh;
+    margin-bottom: 4vh;
 }
 
 .login-home {
@@ -107,6 +122,10 @@ button[name="delete_profile"] {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+    width: 100%;
+    max-height: 60vh; /* Set a maximum height for the job posts container */
 }
 
 .job-post {
@@ -116,6 +135,11 @@ button[name="delete_profile"] {
     background-color: #9afaf6;
     word-wrap: break-word;
     overflow: hidden;
+    width: 600px;
+    margin: 0 auto;
+    position: relative;
+    height: 250px;
+    flex-shrink: 0;
 }
 
 .create-job-post-button {
@@ -134,4 +158,39 @@ button[name="delete_profile"] {
 
 .job-post h3 {
     color: #584ad7;
+}
+
+.views-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.logged-out-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logged-out-message p,
+.logged-out-message button {
+    margin: 10px 0;
+}
+
+.view-post {
+    background-color: #8aa92f;
+    color: white;
+    border: none;
+    padding: 25px 52px;
+    font-size: 17px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 50px;
+}
+
+.view-post:hover {
+    background-color: #6f7d24;
 }

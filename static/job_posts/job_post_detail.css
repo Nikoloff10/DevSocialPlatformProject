@@ -1,37 +1,54 @@
+/* job_post_detail.css */
+
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f4f4f9;
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-.detail-job-container {
-    width: 80%;
-    margin: 0 auto;
-    padding: 20px;
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.job-post-detail {
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    word-wrap: break-word;
-    overflow: hidden;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
 }
 
-h1 {
+.job-post-detail h1 {
     color: #333;
+    margin-bottom: 20px;
 }
 
-p {
+.job-post-detail p {
     color: #666;
-    line-height: 1.6;
+    margin: 10px 0;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #dc3545;
+.job-post-detail button {
+    background-color: #007bff;
     color: #fff;
     border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px;
 }
 
+.job-post-detail button:hover {
+    background-color: #0056b3;
+}

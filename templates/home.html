@@ -27,10 +27,12 @@
                 {% for post in job_posts %}
                     <div class="job-post">
                         <h3>{{ post.title }}</h3>
-                        <p>{{ post.description }}</p>
                         <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
                         <p><strong>Posted by:</strong> {{ post.user.username }}</p>
-                        <p><strong>Posted on:</strong> {{ post.created_at }}</p>
+                        <div class="views-counter">
+                            <p><strong>Views:</strong> {{ post.views }}</p>
+                        </div>
+                        <button class="view-post" onclick="location.href='/job-post/{{ post.id }}'">View Post</button>
                     </div>
                 {% endfor %}
             </div>

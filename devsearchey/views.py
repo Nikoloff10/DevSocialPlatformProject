@@ -1,12 +1,19 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+
 from devsearchey.forms import UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
 from devsearchey.models import JobPost
 
+
+
 def home_view(request):
-    job_posts = JobPost.objects.all()
-    return render(request, 'home.html', {'job_posts': job_posts})
+    job_posts = JobPost.objects.all().order_by('-created_at')
+    context = {'job_posts': job_posts}
+    return render(request, 'home.html', context)
+
+
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -72,6 +79,8 @@ def create_job_post_view(request):
 @login_required
 def job_post_detail_view(request, post_id):
     post = get_object_or_404(JobPost, id=post_id)
+    post.views += 1
+    post.save()
     return render(request, 'job_post_detail.html', {'post': post})
 
 @login_required
@@ -85,3 +94,7 @@ def delete_job_post_view(request, post_id):
 @login_required
 def manage_job_posts_view(request):
     return render(request, 'manage_job_posts.html')
+
+
+
+
