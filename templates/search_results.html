@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Search Results</h1>
+    <h2>Profiles</h2>
+    <ul>
+        {% for profile in profiles %}
+        <li>{{ profile.user.username }} - {{ profile.user.email }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Job Posts</h2>
+    <ul>
+        {% for post in job_posts %}
+        <li>{{ post.title }} - {{ post.reference_number }}</li>
+        {% endfor %}
+    </ul>
+
+</body>
+
+</html>
+

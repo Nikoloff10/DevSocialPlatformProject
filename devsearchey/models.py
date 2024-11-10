@@ -20,6 +20,13 @@ class JobPost(models.Model):
     views = models.PositiveIntegerField(default=0)
     bookmark_count = models.PositiveIntegerField(default=0)
     bookmarked_by = models.ManyToManyField('Profile', related_name='bookmarked_job_posts', blank=True)
+    reference_number = models.CharField(max_length=10, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.post_type == self.JOB_OFFERING and not self.reference_number:
+            self.reference_number = f"REF{self.pk:06d}"
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username} - {self.title}"

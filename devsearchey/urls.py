@@ -1,13 +1,13 @@
 from django.urls import path
-
 from devsearchey.views import home_view, login_view, register_view, logout_view, profile_view, create_job_post_view, \
-    job_post_detail_view, delete_job_post_view, manage_job_posts_view, bookmark_post_view, get_bookmarks_view
+    job_post_detail_view, delete_job_post_view, manage_job_posts_view, bookmark_post_view, get_bookmarks_view, \
+    dev_problems_forum_view, techy_nerds_forum_view, search_view
 
 urlpatterns = [
     path('', home_view, name='home'),
-    path('login', login_view, name='login'),
+    path('login/', login_view, name='login'),
     path('register', register_view, name='register'),
-    path('logout', logout_view, name='logout'),
+    path('logout/', logout_view, name='logout'),
     path('profile', profile_view, name='profile'),
     path('create-job-post', create_job_post_view, name='create_job_post'),
     path('job-post/<int:post_id>', job_post_detail_view, name='job_post_detail'),
@@ -16,4 +16,7 @@ urlpatterns = [
     path('job-post/<int:post_id>/', job_post_detail_view, name='job_post_detail'),
     path('bookmark-post/<int:post_id>/', bookmark_post_view, name='bookmark_post'),
     path('get-bookmarks/', get_bookmarks_view, name='get_bookmarks'),
+    path('dev-problems-forum/', dev_problems_forum_view, name='dev_problems_forum'),
+    path('techy-nerds-forum/', techy_nerds_forum_view, name='techy_nerds_forum'),
+    path('search/', search_view, name='search'),
 ]

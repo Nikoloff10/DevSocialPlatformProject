@@ -15,13 +15,25 @@
 <body>
 <div class="container">
     <h1>DevSearchey</h1>
+    <div class="forum-buttons">
+        <button class="dev_forum_btn" onclick="location.href=`{% url 'dev_problems_forum' %}`">Dev Problems and Discussions</button>
+        <button class="tech_forum_btn" onclick="location.href=`{% url 'techy_nerds_forum' %}`">Techy Nerds</button>
+    </div>
+    
+    
     <div class="welcome-message">
         {% if user.is_authenticated %}
             <h2 class="welcome-user">Welcome, {{ user.username }}</h2>
             <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar-image">
             <button class="profile-button" onclick="location.href='/profile'">Profile</button>
-            <button class="logout-button" onclick="location.href='/logout'">Logout</button>
+            <button class="logout-button" onclick="confirmLogout()">Logout</button>
             <button class="create-job-post-button" onclick="location.href='/create-job-post'">Create Job Post</button>
+
+            <!-- Search Bar -->
+            <form action="{% url 'search' %}" method="get" class="search-bar">
+                <input type="text" name="q" placeholder="Search profiles or job offers...">
+                <button type="submit">Search</button>
+            </form>
 
             <!-- Bookmark Dropdown -->
             <div class="bookmark-dropdown">
@@ -39,6 +51,9 @@
                     <div class="job-post">
                         <h3>{{ post.title }}</h3>
                         <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
+                        {% if post.get_post_type_display == 'Job Offering' %}
+                            <p><strong>Reference Number:</strong> {{ post.reference_number }}</p>
+                        {% endif %}
                         <p><strong>Posted by:</strong> {{ post.user.username }}</p>
                         <div class="views-counter">
                             <p><strong>Views:</strong> {{ post.views }}</p>
@@ -65,7 +80,6 @@
         {% endif %}
     </div>
 </div>
-
 <script>
     document.querySelectorAll('.bookmark-post').forEach(function(button) {
         button.addEventListener('click', function() {
@@ -104,6 +118,12 @@
                     dropdownContent.appendChild(link);
                 });
             });
+    }
+
+    function confirmLogout() {
+        if (confirm("Are you sure you want to logout?")) {
+            window.location.href = "{% url 'logout' %}";
+        }
     }
 
     // Initial call to populate the dropdown on page load

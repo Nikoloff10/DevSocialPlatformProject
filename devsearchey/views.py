@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from devsearchey.forms import UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
 from devsearchey.models import JobPost, Profile
-
+from django.db.models import Q
 
 def home_view(request):
     job_posts = JobPost.objects.all().order_by('-created_at')
@@ -122,4 +122,23 @@ def get_bookmarks_view(request):
 
 
 
+def dev_problems_forum_view(request):
+    job_posts = JobPost.objects.filter(post_type=JobPost.JOB_OFFERING)
+    return render(request, 'dev_problems_forum.html', {'job_posts': job_posts})
 
+def techy_nerds_forum_view(request):
+    return render(request, 'techy_nerds_forum.html')
+
+def search_view(request):
+    query = request.GET.get('q')
+    if query:
+        # Check if the query matches a job post reference number
+        job_post = JobPost.objects.filter(reference_number=query).first()
+        if job_post:
+            return redirect('job_post_detail', post_id=job_post.id)
+        
+        # Otherwise, perform a regular search
+        profiles = Profile.objects.filter(Q(user__username__icontains=query) | Q(user__email__icontains=query))
+        job_posts = JobPost.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
+        return render(request, 'search_results.html', {'profiles': profiles, 'job_posts': job_posts})
+    return render(request, 'search_results.html', {'profiles': [], 'job_posts': []})
