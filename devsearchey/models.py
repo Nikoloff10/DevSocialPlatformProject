@@ -1,3 +1,4 @@
+from datetime import timedelta, timezone
 from django.conf import settings
 
 from django.db import models
@@ -45,4 +46,31 @@ class Profile(models.Model):
 
 
 
+class ForumPost(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    comment_count = models.PositiveIntegerField(default=0)
+    like_count = models.PositiveIntegerField(default=0)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_forum_posts', blank=True)
 
+    def __str__(self):
+        return self.title
+
+    def should_expire(self):
+        if self.user and self.user.username == 'SneakyUser':
+            return timezone.now() > self.created_at + timedelta(hours=12)
+        return False
+
+class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    forum_post = models.ForeignKey(ForumPost, related_name='comments', on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_comments', blank=True)
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.forum_post.title}"

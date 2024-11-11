@@ -14,6 +14,23 @@
     <div class="header">
         <button class="home-button" onclick="location.href='/'">Home</button>
         <h1>{{ user.username }}'s Profile</h1>
+        <!-- Dropdown for User's Forum Posts -->
+        <div class="dropdown">
+            <button class="dropbtn">My Forum Posts</button>
+            <div class="dropdown-content">
+                {% for post in forum_posts %}
+                    <div class="forum-post">
+                        <h3><a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a></h3>
+                        <p>{{ post.content|truncatewords:30 }}</p>
+                        <p><strong>Posted by:</strong> <strong>{{ post.user.username }}</strong> on {{ post.created_at }}</p>
+                        <p><strong>Comments:</strong> {{ post.comment_count }}</p>
+                        <p><strong>Likes:</strong> {{ post.like_count }}</p>
+                        <a href="{% url 'edit_forum_post' post.id %}">Edit</a>
+                        <a href="{% url 'delete_forum_post' post.id %}">Delete</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
     <img id="avatarPreview" src="{{ avatar_url }}" alt="Avatar Preview" class="avatar-preview"/>
     <form action="/profile" method="post" enctype="multipart/form-data">
@@ -49,13 +66,11 @@
         <button type="submit" name="delete_profile">Delete Profile</button>
     </form>
     <button type="button" onclick="location.href='/reset-password'">Reset Password</button>
-    <button onclick="location.href='/manage-job-posts'">Manage Job Posts</button>
 </div>
 <script>
     function confirmDeleteProfile() {
         return confirm("Are you sure you want to delete your profile?");
     }
-
     document.getElementById('id_avatar').addEventListener('change', function (event) {
         const [file] = event.target.files;
         if (file) {

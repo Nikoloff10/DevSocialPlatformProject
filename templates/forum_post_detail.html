@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ forum_post.title }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'forum_styling/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="forum-header">
+            <h1>{{ forum_post.title }}</h1>
+            <div class="forum-buttons">
+                <button onclick="location.href='/'">Home</button>
+                <button onclick="location.href=`{% url 'dev_problems_forum' %}`">Back to Forum</button>
+            </div>
+        </div>
+        <p>{{ forum_post.content }}</p>
+        <p><strong>Posted by:</strong> <strong>{{ forum_post.user.username }}</strong> on {{ forum_post.created_at }}</p>
+        <p><strong>Comments:</strong> {{ forum_post.comment_count }}</p>
+        <p><strong>Likes:</strong> <span id="like-count-{{ forum_post.id }}">{{ forum_post.like_count }}</span></p>
+        <button onclick="likeForumPost('{{ forum_post.id }}')">Like</button>
+        <a href="{% url 'create_comment' forum_post.id %}">Add a Comment</a>
+        <div class="comments">
+            {% for comment in comments %}
+                <div class="comment">
+                    <p>{{ comment.content }}</p>
+                    <p><strong>Posted by:</strong> <strong>{{ comment.user.username }}</strong> on {{ comment.created_at }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        function likeForumPost(postId) {
+            fetch(`/forum-post/${postId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json()).then(data => {
+                document.getElementById(`like-count-${postId}`).textContent = data.like_count;
+            });
+        }
+    </script>
+</body>
+</html>

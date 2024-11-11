@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 
-from devsearchey.models import Profile, JobPost
+from devsearchey.models import Profile, JobPost, ForumPost, Comment
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -82,3 +82,15 @@ class JobPostForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'placeholder': 'Title'}),
             'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Description', 'maxlength': 200}),
         }
+
+
+
+class ForumPostForm(forms.ModelForm):
+    class Meta:
+        model = ForumPost
+        fields = ['title', 'content']
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']

@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Forum Posts</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'forum_styling/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>My Forum Posts</h1>
+        <div class="forum-posts">
+            {% if forum_posts %}
+                {% for post in forum_posts %}
+                    <div class="forum-post">
+                        <h3><a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a></h3>
+                        <p>{{ post.content|truncatewords:30 }}</p>
+                        <p><strong>Posted by:</strong> <strong>{{ post.user.username }}</strong> on {{ post.created_at }}</p>
+                        <p><strong>Comments:</strong> {{ post.comment_count }}</p>
+                        <p><strong>Likes:</strong> {{ post.like_count }}</p>
+                        <a href="{% url 'edit_forum_post' post.id %}">Edit</a>
+                        <a href="{% url 'delete_forum_post' post.id %}">Delete</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No posts created yet...</p>
+            {% endif %}
+        </div>
+        <button class="back-profile" onclick="location.href='/profile'">Back to Profile</button>
+    </div>
+</body>
+</html>
