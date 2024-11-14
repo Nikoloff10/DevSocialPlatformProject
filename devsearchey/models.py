@@ -47,6 +47,10 @@ class Profile(models.Model):
 
 
 class ForumPost(models.Model):
+    CATEGORY_CHOICES = [
+        ('dev_problems', 'Dev Problems and Discussions'),
+        ('techy_nerds', 'Techy Nerds'),
+    ]
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255)
     content = models.TextField()
@@ -55,14 +59,16 @@ class ForumPost(models.Model):
     comment_count = models.PositiveIntegerField(default=0)
     like_count = models.PositiveIntegerField(default=0)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_forum_posts', blank=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='dev_problems')
 
     def __str__(self):
         return self.title
 
     def should_expire(self):
         if self.user and self.user.username == 'SneakyUser':
-            return timezone.now() > self.created_at + timedelta(hours=12)
+            return timezone.now() > self.created_at + timedelta(minutes=1)
         return False
+        
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

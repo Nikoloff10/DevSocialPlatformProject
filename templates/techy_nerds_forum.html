@@ -1,14 +1,41 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Techy Nerds Forum</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'forum_styling/styles.css' %}">
 </head>
 <body>
-    <h1>Techy Nerds</h1>
-    <p>Discuss technology here.</p> 
+    <div class="container">
+        <div class="forum-header">
+            <h1>Techy Nerds Forum</h1>
+            <div class="forum-buttons">
+                <button onclick="location.href='/'">Home</button>
+                <button onclick="location.href=`{% url 'dev_problems_forum' %}`">Dev Problems and Discussions</button>
+                <button onclick="location.href=`{% url 'create_forum_post' %}`">Start a New Discussion</button>
+            </div>
+        </div>
+        <p class="forum-description">Discuss technology here.</p>
+        <div class="forum-posts">
+            {% for post in forum_posts %}
+                <div class="forum-post">
+                    <h3><a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a></h3>
+                    <p>{{ post.content|truncatewords:30 }}</p>
+                    <p><strong>Posted by:</strong> 
+                        {% if post.user %}
+                            <strong>{{ post.user.username }}</strong>
+                        {% else %}
+                            <strong>Sneaky</strong>
+                        {% endif %}
+                        on {{ post.created_at }}
+                    </p>
+                    <p><strong>Comments:</strong> {{ post.comment_count }}</p>
+                    <p><strong>Likes:</strong> <span id="like-count-{{ post.id }}">{{ post.like_count }}</span></p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html>
-
-

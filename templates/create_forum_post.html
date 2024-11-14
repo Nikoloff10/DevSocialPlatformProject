@@ -20,6 +20,13 @@
                 <label for="id_content">Content:</label>
                 {{ form.content }}
             </div>
+            <div class="form-group">
+                <label for="id_category">Category:</label>
+                <select name="category" id="id_category">
+                    <option value="dev_problems">Dev Problems and Discussions</option>
+                    <option value="techy_nerds">Techy Nerds</option>
+                </select>
+            </div>
             <button type="submit">Submit</button>
         </form>
     </div>

@@ -149,11 +149,12 @@ def delete_forum_post_view(request, post_id):
 
 
 def dev_problems_forum_view(request):
-    forum_posts = ForumPost.objects.all().order_by('-created_at')
+    forum_posts = ForumPost.objects.filter(category='dev_problems').order_by('-created_at')
     return render(request, 'dev_problems_forum.html', {'forum_posts': forum_posts})
 
 def techy_nerds_forum_view(request):
-    return render(request, 'techy_nerds_forum.html')
+    forum_posts = ForumPost.objects.filter(category='techy_nerds').order_by('-created_at')
+    return render(request, 'techy_nerds_forum.html', {'forum_posts': forum_posts})
 
 def search_view(request):
     query = request.GET.get('q')
@@ -184,8 +185,9 @@ def create_forum_post_view(request):
             else:
                 sneaky_user = User.objects.get(username='SneakyUser')
                 forum_post.user = sneaky_user
+            forum_post.category = request.POST.get('category', 'dev_problems')
             forum_post.save()
-            return redirect('dev_problems_forum')
+            return redirect('dev_problems_forum' if forum_post.category == 'dev_problems' else 'techy_nerds_forum')
     else:
         form = ForumPostForm()
     return render(request, 'create_forum_post.html', {'form': form})
