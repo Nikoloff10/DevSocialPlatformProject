@@ -18,6 +18,7 @@ class JobPost(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     views = models.PositiveIntegerField(default=0)
     bookmark_count = models.PositiveIntegerField(default=0)
     bookmarked_by = models.ManyToManyField('Profile', related_name='bookmarked_job_posts', blank=True)
