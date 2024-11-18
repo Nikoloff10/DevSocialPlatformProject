@@ -33,7 +33,7 @@
         </div>
     </div>
     <img id="avatarPreview" src="{{ avatar_url }}" alt="Avatar Preview" class="avatar-preview"/>
-    <form action="/profile" method="post" enctype="multipart/form-data">
+    <form action="{% url 'profile' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
             <label for="id_avatar" class="custom-file-upload">Choose Avatar Pic</label>
@@ -61,7 +61,7 @@
         </div>
         <button type="submit">Update</button>
     </form>
-    <form method="post" style="margin-top: 20px;" onsubmit="return confirmDeleteProfile();">
+    <form action="{% url 'delete_profile' %}" method="post" style="margin-top: 20px;" onsubmit="return confirmDeleteProfile();">
         {% csrf_token %}
         <button type="submit" name="delete_profile">Delete Profile</button>
     </form>

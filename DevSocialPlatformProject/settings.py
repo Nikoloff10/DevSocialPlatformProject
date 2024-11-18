@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,9 +39,27 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'devsearchey',
+    'devsearchey.apps.DevsearcheyConfig',
+    'cloudinary',
+    'cloudinary_storage',
 
 ]
+
+cloudinary.config(
+    cloud_name='dfxbvixpv',
+    api_key='288166313734759',
+    api_secret='rj5ziHFTOQTuWXrl_VZU98xi-Dc',
+    secure = True
+)
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dfxbvixpv',
+    'API_KEY': '288166313734759',
+    'API_SECRET': 'rj5ziHFTOQTuWXrl_VZU98xi-Dc',
+}
+
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -128,11 +147,12 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
-# settings.py
+
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

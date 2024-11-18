@@ -1,6 +1,6 @@
 from datetime import timedelta, timezone
 from django.conf import settings
-
+from cloudinary.models import CloudinaryField
 from django.db import models
 
 
@@ -37,7 +37,7 @@ class JobPost(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(default='no bio...')
-    avatar = models.ImageField(default='avatars/default.jpg', upload_to='avatars/')
+    avatar = CloudinaryField('image', default='https://res.cloudinary.com/dfxbvixpv/image/upload/v1731942244/j4spsms91wb541cu9bvh.png')
     github = models.URLField(blank=True)
     website = models.URLField(blank=True)
     bookmarked_posts = models.ManyToManyField(JobPost, related_name='bookmarked_by_profiles', blank=True)

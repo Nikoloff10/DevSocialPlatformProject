@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from devsearchey.views import HomeView, ProfileView, CreateJobPostView, JobPostDetailView, DeleteJobPostView, ForumPostDetailView, SearchView, BookmarkPostView, GetBookmarksView, DevProblemsForumView, TechyNerdsForumView, CreateForumPostView, CreateCommentView, LikeForumPostView, UserForumPostsView, EditForumPostView, DeleteForumPostView, ForumPostViewSet, CommentViewSet, JobPostViewSet, ProfileViewSet, LoginView, RegisterView, LogoutView
+from devsearchey.views import DeleteProfileView, HomeView, ProfileView, CreateJobPostView, JobPostDetailView, DeleteJobPostView, ForumPostDetailView, SearchView, BookmarkPostView, GetBookmarksView, DevProblemsForumView, TechyNerdsForumView, CreateForumPostView, CreateCommentView, LikeForumPostView, UserForumPostsView, EditForumPostView, DeleteForumPostView, ForumPostViewSet, CommentViewSet, JobPostViewSet, ProfileViewSet, LoginView, RegisterView, LogoutView
 
 router = DefaultRouter()
 router.register(r'forum-posts', ForumPostViewSet)
@@ -14,6 +14,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('delete-profile/', DeleteProfileView.as_view(), name='delete_profile'),
     path('create-job-post/', CreateJobPostView.as_view(), name='create_job_post'),
     path('job-post/<int:pk>/', JobPostDetailView.as_view(), name='job_post_detail'),
     path('delete-job-post/<int:pk>/', DeleteJobPostView.as_view(), name='delete_job_post'),

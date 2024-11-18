@@ -15,6 +15,7 @@ from devsearchey.forms import CommentForm, ForumPostForm, UserLoginForm, UserReg
 from devsearchey.models import Comment, JobPost, Profile, ForumPost
 from devsearchey.serializers import ForumPostSerializer, CommentSerializer, JobPostSerializer, ProfileSerializer
 from django.db.models import Q
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 
 class HomeView(ListView):
@@ -60,9 +61,20 @@ class ProfileView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['avatar_url'] = self.request.user.profile.avatar.url if self.request.user.profile.avatar else ''
+        avatar = self.request.user.profile.avatar
+        if isinstance(avatar, InMemoryUploadedFile):
+            context['avatar_url'] = None 
+        else:
+            context['avatar_url'] = avatar.url if avatar else 'https://res.cloudinary.com/dfxbvixpv/image/upload/v1731942244/j4spsms91wb541cu9bvh.png'
         context['forum_posts'] = ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
         return context
+
+class DeleteProfileView(LoginRequiredMixin, View):
+    def post(self, request):
+        user = request.user
+        user.delete()
+        return redirect('home')
+
 
 class CreateJobPostView(LoginRequiredMixin, CreateView):
     model = JobPost

@@ -53,7 +53,7 @@ class UserLoginForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'avatar', 'github', 'website']
+        fields = ['avatar', 'bio', 'github', 'website']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 5, 'placeholder': 'no bio...'}),
             'avatar': forms.FileInput(attrs={'class': 'custom-file-input'}),
