@@ -19,15 +19,15 @@
                 <p>{{ post.description }}</p>
                 <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
                 <p><strong>Posted on:</strong> {{ post.created_at }}</p>
-                <button class="detail-job-button" onclick="location.href='/job-post/{{ post.id }}'">View Details</button>
-                <form method="post" action="{% url 'delete_job_post' post.id %}">
+                <button class="detail-job-button" onclick="location.href='{% url 'job_post_detail' pk=post.id %}'">View Details</button>
+                <form method="post" action="{% url 'delete_job_post' pk=post.id %}">
                     {% csrf_token %}
                     <button class="delete-job-button" type="submit">Delete</button>
                 </form>
             </div>
         {% endfor %}
     </div>
-    <button class="back-profile" onclick="location.href='/profile'">Back to Profile</button>
+    <button class="back-profile" onclick="location.href='{% url 'profile' %}'">Back to Profile</button>
 </div>
 </body>
 </html>

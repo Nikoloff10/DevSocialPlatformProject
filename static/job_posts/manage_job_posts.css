@@ -13,6 +13,10 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.manage-job-container .bookmark-post.btn {
+    margin-top: 50px; 
+}
+
 h1 {
     color: #333;
 }
@@ -64,3 +68,4 @@ button {
     word-wrap: break-word;
     overflow: hidden;
 }
+

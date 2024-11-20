@@ -14,9 +14,10 @@ from rest_framework import viewsets
 from devsearchey.forms import CommentForm, ForumPostForm, UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
 from devsearchey.models import Comment, JobPost, Profile, ForumPost
 from devsearchey.serializers import ForumPostSerializer, CommentSerializer, JobPostSerializer, ProfileSerializer
-from django.db.models import Q
+from django.db.models import Q, F
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
+
 
 class HomeView(ListView):
     model = JobPost
@@ -89,13 +90,30 @@ class CreateJobPostView(LoginRequiredMixin, CreateView):
 class JobPostDetailView(LoginRequiredMixin, DetailView):
     model = JobPost
     template_name = 'job_post_detail.html'
-    context_object_name = 'post'
+    context_object_name = 'job_post'
 
-    def get_object(self):
-        post = super().get_object()
-        post.views += 1
-        post.save()
-        return post
+    def get(self, request, *args, **kwargs):
+        # Retrieve the object
+        self.object = self.get_object()
+        
+        # Increment the views counter using F() to handle concurrency
+        JobPost.objects.filter(pk=self.object.pk).update(views=F('views') + 1)
+        
+        # Refresh the object from the database to get the updated value
+        self.object.refresh_from_db()
+        
+        # Proceed with the normal get method
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+        user = self.request.user
+
+        # Determine if the current user has bookmarked this post
+        context['is_bookmarked'] = post.bookmarked_by_profiles.filter(id=user.profile.id).exists()
+
+        return context
 
 class DeleteJobPostView(LoginRequiredMixin, DeleteView):
     model = JobPost
@@ -124,7 +142,7 @@ class BookmarkPostView(LoginRequiredMixin, View):
             profile.bookmarked_posts.add(post)
             action = 'added'
 
-        post.bookmark_count = post.bookmarked_by.count()
+        post.bookmark_count = post.bookmarked_by_profiles.count()
         post.save()
 
         return JsonResponse({'action': action, 'bookmark_count': post.bookmark_count})

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from devsearchey.views import DeleteProfileView, HomeView, ProfileView, CreateJobPostView, JobPostDetailView, DeleteJobPostView, ForumPostDetailView, SearchView, BookmarkPostView, GetBookmarksView, DevProblemsForumView, TechyNerdsForumView, CreateForumPostView, CreateCommentView, LikeForumPostView, UserForumPostsView, EditForumPostView, DeleteForumPostView, ForumPostViewSet, CommentViewSet, JobPostViewSet, ProfileViewSet, LoginView, RegisterView, LogoutView
+from devsearchey.views import DeleteProfileView, HomeView, ManageJobPostsView, ProfileView, CreateJobPostView, JobPostDetailView, DeleteJobPostView, ForumPostDetailView, SearchView, BookmarkPostView, GetBookmarksView, DevProblemsForumView, TechyNerdsForumView, CreateForumPostView, CreateCommentView, LikeForumPostView, UserForumPostsView, EditForumPostView, DeleteForumPostView, ForumPostViewSet, CommentViewSet, JobPostViewSet, ProfileViewSet, LoginView, RegisterView, LogoutView
 
 router = DefaultRouter()
 router.register(r'forum-posts', ForumPostViewSet)
@@ -30,5 +30,6 @@ urlpatterns = [
     path('user-forum-posts/', UserForumPostsView.as_view(), name='user_forum_posts'),
     path('edit-forum-post/<int:post_id>/', EditForumPostView.as_view(), name='edit_forum_post'),
     path('delete-forum-post/<int:post_id>/', DeleteForumPostView.as_view(), name='delete_forum_post'),
+    path('manage-job-posts/', ManageJobPostsView.as_view(), name='manage_job_posts'),
     path('api/', include(router.urls)),
 ]

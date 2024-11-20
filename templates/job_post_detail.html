@@ -6,22 +6,85 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ post.title }}</title>
+    <title>{{ job_post.title }}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'job_posts/job_post_detail.css' %}">
 </head>
 <body>
-<div class="container">
-    <div class="job-post-detail">
-        <h1>{{ post.title }}</h1>
-        <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
-        <p><strong>Posted by:</strong> {{ post.user.username }}</p>
-        <p><strong>Description:</strong> {{ post.description }}</p>
-        <p><strong>Reference Number:</strong> {{ post.reference_number }}</p>
-        <p><strong>Posted on:</strong> {{ post.created_at }}</p>
-        <p><strong>Views:</strong> {{ post.views }}</p>
-        
-        <button onclick="location.href='/'">Back to Home</button>
+<div class="job-post-detail-container">
+    <div class="job-header">
+        <h1>{{ job_post.title }}</h1>
+        <div class="job-buttons">
+            <button onclick="location.href='/'">Home</button>
+            <button onclick="location.href=`{% url 'manage_job_posts' %}`">Back to Job Posts</button>
+        </div>
     </div>
+    <p>{{ job_post.description }}</p>
+    <p><strong>Type:</strong> {{ job_post.get_post_type_display }}</p>
+    {% if job_post.get_post_type_display == 'Job Offering' %}
+        <p><strong>Reference Number:</strong> {{ job_post.reference_number }}</p>
+    {% endif %}
+    <p><strong>Posted by:</strong> {{ job_post.user.username }}</p>
+    <p><strong>Created At:</strong> {{ job_post.created_at }}</p>
+    <p><strong>Views:</strong> {{ job_post.views }}</p>
+    <p><strong>Bookmarks:</strong> {{ job_post.bookmarked_by_profiles.count }}</p>
+
+    {% if user.is_authenticated %}
+        {% if is_bookmarked %}
+            <p style="color: green;" class="bookmark-status">Bookmarked by you</p>
+        {% else %}
+            <p style="color: red;" class="bookmark-status">Not bookmarked by you</p>
+        {% endif %}
+
+        <button class="bookmark-post" data-post-id="{{ job_post.id }}">
+            {% if is_bookmarked %}
+                Remove Bookmark
+            {% else %}
+                Bookmark it
+            {% endif %}
+        </button>
+    {% endif %}
 </div>
+<script>
+    document.querySelectorAll('.bookmark-post').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const postId = this.getAttribute('data-post-id');
+            fetch(`/bookmark-post/${postId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.action === 'added') {
+                    this.textContent = 'Remove Bookmark';
+                    // Update the bookmark status text
+                    const statusText = document.querySelector('.bookmark-status');
+                    if(statusText){
+                        statusText.textContent = 'Bookmarked by you';
+                        statusText.style.color = 'green';
+                    }
+                } else {
+                    this.textContent = 'Bookmark it';
+                    // Update the bookmark status text
+                    const statusText = document.querySelector('.bookmark-status');
+                    if(statusText){
+                        statusText.textContent = 'Not bookmarked by you';
+                        statusText.style.color = 'red';
+                    }
+                }
+                // Update the bookmark counter
+                const bookmarkCounter = document.querySelector('.bookmark-counter p');
+                if(bookmarkCounter){
+                    bookmarkCounter.textContent = `Bookmarks: ${data.bookmark_count}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
 </body>
 </html>

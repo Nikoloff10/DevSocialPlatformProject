@@ -1,54 +1,111 @@
-/* job_post_detail.css */
-
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #eef2f3;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.job-post-detail {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
-    text-align: center;
-}
-
-.job-post-detail h1 {
     color: #333;
-    margin-bottom: 20px;
 }
 
-.job-post-detail p {
-    color: #666;
-    margin: 10px 0;
+.job-post-detail-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.job-post-detail button {
-    background-color: #007bff;
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.job-header h1 {
+    font-size: 2em;
+    color: #2c3e50;
+}
+
+.job-buttons button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background-color: #3498db;
     color: #fff;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
+    transition: background-color 0.3s ease;
 }
 
-.job-post-detail button:hover {
-    background-color: #0056b3;
+.job-buttons button:hover {
+    background-color: #2980b9;
+}
+
+.job-content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.job-content p strong {
+    color: #34495e;
+}
+
+.bookmark-section {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bookmark-status {
+    font-size: 1em;
+    margin-right: 20px;
+}
+
+.bookmark-status.bookmarked {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.bookmark-status.not-bookmarked {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+.bookmark-post {
+    padding: 10px 15px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.bookmark-post:hover {
+    background-color: #c0392b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .job-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .job-buttons {
+        margin-top: 15px;
+    }
+
+    .bookmark-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .bookmark-post {
+        margin-top: 10px;
+        width: 100%;
+    }
 }

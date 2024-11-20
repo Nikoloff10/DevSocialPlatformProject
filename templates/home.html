@@ -1,10 +1,11 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
     <link rel="stylesheet" type="text/css" href="{% static 'home/styles.css' %}">
@@ -12,17 +13,19 @@
     <link rel="stylesheet" type="text/css" href="{% static 'job_posts/job_post_detail.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'job_posts/manage_job_posts.css' %}">
 </head>
+
 <body>
-<div class="container">
-    <h1>DevSearchey</h1>
-    <div class="forum-buttons">
-        <button class="dev_forum_btn" onclick="location.href=`{% url 'dev_problems_forum' %}`">Dev Problems and Discussions</button>
-        <button class="tech_forum_btn" onclick="location.href=`{% url 'techy_nerds_forum' %}`">Techy Nerds</button>
-    </div>
-    
-    
-    <div class="welcome-message">
-        {% if user.is_authenticated %}
+    <div class="container">
+        <h1>DevSearchey</h1>
+        <div class="forum-buttons">
+            <button class="dev_forum_btn" onclick="location.href=`{% url 'dev_problems_forum' %}`">Dev Problems and
+                Discussions</button>
+            <button class="tech_forum_btn" onclick="location.href=`{% url 'techy_nerds_forum' %}`">Techy Nerds</button>
+        </div>
+
+
+        <div class="welcome-message">
+            {% if user.is_authenticated %}
             <h2 class="welcome-user">Welcome, {{ user.username }}</h2>
             <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar-image">
             <button class="profile-button" onclick="location.href='/profile'">Profile</button>
@@ -40,7 +43,7 @@
                 <button class="bookmark-dropdown-button">Bookmarks</button>
                 <div class="bookmark-dropdown-content">
                     {% for post in user.profile.bookmarked_posts.all %}
-                        <a href="/job-post/{{ post.id }}">{{ post.title }}</a>
+                    <a href="/job-post/{{ post.id }}">{{ post.title }}</a>
                     {% endfor %}
                 </div>
             </div>
@@ -48,86 +51,87 @@
             <div class="job-posts">
                 <h2>Job Posts</h2>
                 {% for post in job_posts %}
-                    <div class="job-post">
-                        <h3>{{ post.title }}</h3>
-                        <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
-                        {% if post.get_post_type_display == 'Job Offering' %}
-                            <p><strong>Reference Number:</strong> {{ post.reference_number }}</p>
-                        {% endif %}
-                        <p><strong>Posted by:</strong> {{ post.user.username }}</p>
-                        <div class="views-counter">
-                            <p><strong>Views:</strong> {{ post.views }}</p>
-                        </div>
-                        <div class="bookmark-counter">
-                            <p><strong>Bookmarks:</strong> {{ post.bookmark_count }}</p>
-                        </div>
-                        <button class="view-post" onclick="location.href='/job-post/{{ post.id }}'">View Post</button>
-                        <button class="bookmark-post" data-post-id="{{ post.id }}">
-                            {% if post in user.profile.bookmarked_posts.all %}
-                                Remove Bookmark
-                            {% else %}
-                                Bookmark it
-                            {% endif %}
-                        </button>
+                <div class="job-post">
+                    <h3>{{ post.title }}</h3>
+                    <p><strong>Type:</strong> {{ post.get_post_type_display }}</p>
+                    {% if post.get_post_type_display == 'Job Offering' %}
+                    <p><strong>Reference Number:</strong> {{ post.reference_number }}</p>
+                    {% endif %}
+                    <p><strong>Posted by:</strong> {{ post.user.username }}</p>
+                    <div class="views-counter">
+                        <p><strong>Views:</strong> {{ post.views }}</p>
                     </div>
+                    <div class="bookmark-counter">
+                        <p><strong>Bookmarks:</strong> {{ post.bookmarked_by_profiles.count }}</p>
+                    </div>
+                    <button class="view-post btn" onclick="location.href='/job-post/{{ post.id }}'">View Post</button>
+                    <button class="bookmark-post btn" data-post-id="{{ post.id }}">
+                        {% if post in user.profile.bookmarked_posts.all %}
+                        Remove Bookmark
+                        {% else %}
+                        Bookmark it
+                        {% endif %}
+                    </button>
+                </div>
                 {% endfor %}
             </div>
-        {% else %}
+            {% else %}
             <p class="welcome-user">Welcome, Sneaky User!</p>
             <button class="login-home" onclick="location.href='/login'">Login</button>
             <p class="or">or</p>
             <button class="register-home" onclick="location.href='/register'">Register</button>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
-</div>
-<script>
-    document.querySelectorAll('.bookmark-post').forEach(function(button) {
-        button.addEventListener('click', function() {
-            const postId = this.getAttribute('data-post-id');
-            fetch(`/bookmark-post/${postId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => response.json()).then(data => {
-                if (data.action === 'added') {
-                    this.textContent = 'Remove Bookmark';
-                } else {
-                    this.textContent = 'Bookmark it';
-                }
-                // Update the bookmark counter
-                const bookmarkCounter = this.closest('.job-post').querySelector('.bookmark-counter p');
-                bookmarkCounter.textContent = `Bookmarks: ${data.bookmark_count}`;
-                // Refresh the bookmarks list
-                updateBookmarkDropdown();
-            });
-        });
-    });
-
-    function updateBookmarkDropdown() {
-        fetch('/get-bookmarks/')
-            .then(response => response.json())
-            .then(data => {
-                const dropdownContent = document.querySelector('.bookmark-dropdown-content');
-                dropdownContent.innerHTML = '';
-                data.bookmarks.forEach(post => {
-                    const link = document.createElement('a');
-                    link.href = `/job-post/${post.id}`;
-                    link.textContent = post.title;
-                    dropdownContent.appendChild(link);
+    <script>
+        document.querySelectorAll('.bookmark-post').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const postId = this.getAttribute('data-post-id');
+                fetch(`/bookmark-post/${postId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => response.json()).then(data => {
+                    if (data.action === 'added') {
+                        this.textContent = 'Remove Bookmark';
+                    } else {
+                        this.textContent = 'Bookmark it';
+                    }
+                    // Update the bookmark counter
+                    const bookmarkCounter = this.closest('.job-post').querySelector('.bookmark-counter p');
+                    bookmarkCounter.textContent = `Bookmarks: ${data.bookmark_count}`;
+                    // Refresh the bookmarks list
+                    updateBookmarkDropdown();
                 });
             });
-    }
+        });
 
-    function confirmLogout() {
-        if (confirm("Are you sure you want to logout?")) {
-            window.location.href = "{% url 'logout' %}";
+        function updateBookmarkDropdown() {
+            fetch('/get-bookmarks/')
+                .then(response => response.json())
+                .then(data => {
+                    const dropdownContent = document.querySelector('.bookmark-dropdown-content');
+                    dropdownContent.innerHTML = '';
+                    data.bookmarks.forEach(post => {
+                        const link = document.createElement('a');
+                        link.href = `/job-post/${post.id}`;
+                        link.textContent = post.title;
+                        dropdownContent.appendChild(link);
+                    });
+                });
         }
-    }
 
-    // Initial call to populate the dropdown on page load
-    updateBookmarkDropdown();
-</script>
+        function confirmLogout() {
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = "{% url 'logout' %}";
+            }
+        }
+
+        // Initial call to populate the dropdown on page load
+        updateBookmarkDropdown();
+    </script>
 </body>
+
 </html>

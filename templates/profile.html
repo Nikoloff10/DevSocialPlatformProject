@@ -17,6 +17,7 @@
         <!-- Dropdown for User's Forum Posts -->
         <div class="dropdown">
             <button class="dropbtn">My Forum Posts</button>
+            <button class="manage-job-posts-button" onclick="location.href='{% url 'manage_job_posts' %}'">Manage Job Posts</button>
             <div class="dropdown-content">
                 {% for post in forum_posts %}
                     <div class="forum-post">

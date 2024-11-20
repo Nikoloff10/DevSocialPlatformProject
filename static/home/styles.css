@@ -75,11 +75,16 @@ h1 {
     margin: 5px 0;
 }
 
-button {
-    padding: 10px 20px;
+button.btn {
     border: none;
+    padding: 15px 30px; 
+    font-size: 16px;    
+    border-radius: 5px;
     cursor: pointer;
+    color: white;       
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
 
 button[type="submit"] {
     background-color: #4CAF50;
@@ -125,7 +130,7 @@ button[name="delete_profile"] {
     flex-grow: 1;
     overflow-y: auto;
     width: 100%;
-    max-height: 60vh; /* Set a maximum height for the job posts container */
+    max-height: 60vh; 
 }
 
 .job-post {
@@ -180,19 +185,13 @@ button[name="delete_profile"] {
     margin: 10px 0;
 }
 
-.view-post {
-    background-color: #8aa92f;
-    color: white;
-    border: none;
-    padding: 25px 52px;
-    font-size: 17px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 50px;
+button.view-post.btn {
+    background-color: #8aa92f; /* Green */
 }
 
-.view-post:hover {
-    background-color: #6f7d24;
+button.view-post.btn:hover {
+    background-color: #6f7d24; /* Darker Green on Hover */
+    transform: translateY(-2px); /* Slight lift on hover */
 }
 
 .bookmark-counter {
@@ -249,19 +248,14 @@ button[name="delete_profile"] {
     to {opacity: 1;}
 }
 
-.bookmark-post {
-    background-color: #c47e0d;
-    color: white;
-    border: none;
-    padding: 25px 52px;
-    font-size: 17px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 50px;
+button.bookmark-post.btn {
+    background-color: #c47e0d; 
+    margin-top: 0;              
 }
 
-.bookmark-post:hover {
-    background-color: #7a5308;
+button.bookmark-post.btn:hover {
+    background-color: #a35c0b; 
+    transform: translateY(-2px); 
 }
 
 .search-bar {
@@ -298,4 +292,20 @@ button[name="delete_profile"] {
 }
 .forum-buttons button:hover {
     background-color: #0056b3;
+}
+
+.btn {
+    border: none;
+    padding: 15px 30px; 
+    font-size: 16px;    
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;     
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+
+.btn:focus {
+    outline: 3px solid #555;
+    outline-offset: 2px;
 }
