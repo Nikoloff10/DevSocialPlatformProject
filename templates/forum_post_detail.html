@@ -6,30 +6,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ forum_post.title }}</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <div class="forum-header">
-            <h1>{{ forum_post.title }}</h1>
-            <div class="forum-buttons">
-                <button onclick="location.href='/'">Home</button>
-                <button onclick="location.href=`{% url 'dev_problems_forum' %}`">Back to Forum</button>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="container bg-white p-8 rounded shadow-md w-full max-w-3xl flex flex-col">
+        <div class="forum-header flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">{{ forum_post.title }}</h1>
+            <div class="forum-buttons flex space-x-4">
+                <button
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                    onclick="location.href=`{% url 'home' %}`">
+                    Home
+                </button>
+                <button
+                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
+                    onclick="location.href=`{% url 'dev_problems_forum' %}`">
+                    Back to Forum
+                </button>
             </div>
         </div>
-        <p>{{ forum_post.content }}</p>
-        <p><strong>Posted by:</strong> <strong>{{ forum_post.user.username }}</strong> on {{ forum_post.created_at }}</p>
-        <p><strong>Comments:</strong> {{ forum_post.comment_count }}</p>
-        <p><strong>Likes:</strong> <span id="like-count-{{ forum_post.id }}">{{ forum_post.like_count }}</span></p>
-        <button onclick="likeForumPost('{{ forum_post.id }}')">Like</button>
-        <a href="{% url 'create_comment' forum_post.id %}">Add a Comment</a>
-        <div class="comments">
+        <div class="forum-content mb-6">
+            <p class="text-gray-700 text-lg mb-4">{{ forum_post.content }}</p>
+            <div class="forum-details text-sm text-gray-500 mb-4">
+                <p><strong>Posted by:</strong> <strong>{{ forum_post.user.username }}</strong> on {{ forum_post.created_at|date:"F j, Y, g:i a" }}</p>
+                <p><strong>Comments:</strong> {{ forum_post.comment_count }}</p>
+                <p><strong>Likes:</strong> <span id="like-count-{{ forum_post.id }}">{{ forum_post.like_count }}</span></p>
+            </div>
+            <div class="forum-actions flex space-x-4 mb-4">
+                <button
+                    class="like-button bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
+                    onclick="likeForumPost('{{ forum_post.id }}')">
+                    Like
+                </button>
+                <a
+                    href="{% url 'create_comment' forum_post.id %}"
+                    class="add-comment-link bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-colors">
+                    Add a Comment
+                </a>
+            </div>
+        </div>
+        
+        <!-- Updated Comments Section -->
+        <div class="max-h-96 overflow-y-auto p-4 bg-gray-50 rounded flex-grow">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Comments</h2>
             {% for comment in comments %}
-                <div class="comment">
-                    <p>{{ comment.content }}</p>
-                    <p><strong>Posted by:</strong> <strong>{{ comment.user.username }}</strong> on {{ comment.created_at }}</p>
+                <div class="comment bg-white p-4 rounded mb-4 shadow-sm hover:shadow-md transition-shadow">
+                    <p class="text-gray-700 mb-2">{{ comment.content }}</p>
+                    <p class="text-sm text-gray-500">
+                        <strong>Posted by:</strong> <strong>{{ comment.user.username }}</strong> on {{ comment.created_at|date:"F j, Y, g:i a" }}
+                    </p>
                 </div>
+            {% empty %}
+                <p class="text-center text-gray-600">No comments yet. Be the first to comment!</p>
             {% endfor %}
         </div>
+        
+        <button
+            class="back-profile mt-8 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors w-full"
+            onclick="location.href=`{% url 'profile' %}`">
+            Back to Profile
+        </button>
     </div>
     <script>
         function likeForumPost(postId) {

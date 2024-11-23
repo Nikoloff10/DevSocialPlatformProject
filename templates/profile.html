@@ -8,30 +8,26 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Profile</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center">
 <div class="container bg-white p-8 rounded shadow-md w-full max-w-4xl mt-8">
     <div class="header flex justify-between items-center mb-6">
         <button class="home-button bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors" onclick="location.href='/'">Home</button>
         <h1 class="text-3xl font-bold text-gray-800">{{ user.username }}'s Profile</h1>
-        <!-- Dropdown for User's Forum Posts -->
-        <div class="dropdown relative">
-            <button class="dropbtn bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-600 transition-colors">My Forum Posts</button>
-            <button class="manage-job-posts-button bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600 transition-colors ml-4" onclick="location.href=`{% url 'manage_job_posts' %}`">Manage Job Posts</button>
-            <div class="dropdown-content absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg hidden z-50">
-                {% for post in forum_posts %}
-                    <div class="forum-post p-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-blue-500"><a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a></h3>
-                        <p class="text-gray-700">{{ post.content|truncatewords:30 }}</p>
-                        <p class="text-sm text-gray-500"><strong>Posted by:</strong> <strong>{{ post.user.username }}</strong> on {{ post.created_at }}</p>
-                        <p class="text-sm text-gray-500"><strong>Comments:</strong> {{ post.comment_count }}</p>
-                        <p class="text-sm text-gray-500"><strong>Likes:</strong> {{ post.like_count }}</p>
-                        <a href="{% url 'edit_forum_post' post.id %}" class="text-blue-500 hover:underline">Edit</a>
-                        <a href="{% url 'delete_forum_post' post.id %}" class="text-red-500 hover:underline ml-2">Delete</a>
-                    </div>
-                {% endfor %}
-            </div>
+       <!-- Dropdown for User's Forum Posts -->
+       <div class="dropdown relative">
+        <div class="buttons flex space-x-4">
+            <button
+                class="manage-job-posts-button bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600 transition-colors"
+                onclick="location.href=`{% url 'manage_job_posts' %}`">Manage Job Posts
+            </button>
+            <button
+                class="my-forum-posts-button bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-600 transition-colors"
+                onclick="location.href=`{% url 'user_forum_posts' %}`">My Forum Posts
+            </button>
         </div>
+    </div>
     </div>
     <img id="avatarPreview" src="{{ avatar_url }}" alt="Avatar Preview" class="avatar-preview w-32 h-32 rounded-full mx-auto mb-6"/>
     <form action="{% url 'profile' %}" method="post" enctype="multipart/form-data" class="space-y-4">
@@ -81,6 +77,26 @@
             document.getElementById('avatarPreview').src = URL.createObjectURL(file);
         }
     });
+
+    // Toggle dropdown visibility
+    document.querySelector('.dropbtn').addEventListener('click', function (event) {
+        event.stopPropagation(); // Prevent the click from bubbling up to the window
+        const dropdownContent = this.nextElementSibling;
+        dropdownContent.classList.toggle('hidden');
+    });
+
+    // Close the dropdown if the user clicks outside of it
+    window.addEventListener('click', function (event) {
+        if (!event.target.matches('.dropbtn')) {
+            const dropdowns = document.querySelectorAll('.dropdown-content');
+            dropdowns.forEach(dropdown => {
+                if (!dropdown.classList.contains('hidden')) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+    });
+
 </script>
 </body>
 </html>

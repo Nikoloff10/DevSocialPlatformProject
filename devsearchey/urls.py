@@ -28,8 +28,8 @@ urlpatterns = [
     path('forum-post/<int:post_id>/like/', LikeForumPostView.as_view(), name='like_forum_post'),
     path('techy-nerds-forum/', TechyNerdsForumView.as_view(), name='techy_nerds_forum'),
     path('user-forum-posts/', UserForumPostsView.as_view(), name='user_forum_posts'),
-    path('edit-forum-post/<int:post_id>/', EditForumPostView.as_view(), name='edit_forum_post'),
-    path('delete-forum-post/<int:post_id>/', DeleteForumPostView.as_view(), name='delete_forum_post'),
+    path('edit-forum-post/<int:pk>/', EditForumPostView.as_view(), name='edit_forum_post'),
+    path('delete-forum-post/<int:pk>/', DeleteForumPostView.as_view(), name='delete_forum_post'),
     path('manage-job-posts/', ManageJobPostsView.as_view(), name='manage_job_posts'),
     path('api/', include(router.urls)),
 ]

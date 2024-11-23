@@ -17,6 +17,7 @@ from devsearchey.serializers import ForumPostSerializer, CommentSerializer, JobP
 from django.db.models import Q, F
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
+from django.contrib import messages
 
 
 class HomeView(ListView):
@@ -67,7 +68,8 @@ class ProfileView(LoginRequiredMixin, UpdateView):
             context['avatar_url'] = None 
         else:
             context['avatar_url'] = avatar.url if avatar else 'https://res.cloudinary.com/dfxbvixpv/image/upload/v1731942244/j4spsms91wb541cu9bvh.png'
-        context['forum_posts'] = ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
+        # context['forum_posts'] = ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
+        context['forum_posts'] = self.request.user.forum_posts.all().order_by('-created_at')
         return context
 
 class DeleteProfileView(LoginRequiredMixin, View):
@@ -117,10 +119,17 @@ class JobPostDetailView(LoginRequiredMixin, DetailView):
 
 class DeleteJobPostView(LoginRequiredMixin, DeleteView):
     model = JobPost
+    template_name = 'confirm_delete_job_post.html'
     success_url = reverse_lazy('profile')
+    context_object_name = 'job_post'  # Add this line
 
     def get_queryset(self):
+        # Ensure that users can only delete their own job posts
         return JobPost.objects.filter(user=self.request.user)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Your job post has been successfully deleted.")
+        return super().delete(request, *args, **kwargs)
 
 class ManageJobPostsView(LoginRequiredMixin, ListView):
     model = JobPost
@@ -129,6 +138,33 @@ class ManageJobPostsView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return JobPost.objects.filter(user=self.request.user)
+
+class UserForumPostsView(LoginRequiredMixin, ListView):
+    model = ForumPost
+    template_name = 'user_forum_posts.html'
+    context_object_name = 'forum_posts'
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
+
+class EditForumPostView(LoginRequiredMixin, UpdateView):
+    model = ForumPost
+    form_class = ForumPostForm
+    template_name = 'edit_forum_post.html'
+    success_url = reverse_lazy('user_forum_posts')
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(user=self.request.user)
+
+class DeleteForumPostView(LoginRequiredMixin, DeleteView):
+    model = ForumPost
+    template_name = 'confirm_delete_forum_post.html'
+    success_url = reverse_lazy('user_forum_posts')
+    context_object_name = 'forum_post'
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(user=self.request.user)
+
 
 class BookmarkPostView(LoginRequiredMixin, View):
     def post(self, request, post_id):
@@ -153,30 +189,9 @@ class GetBookmarksView(LoginRequiredMixin, View):
         bookmarks_data = [{'id': post.id, 'title': post.title} for post in bookmarks]
         return JsonResponse({'bookmarks': bookmarks_data})
 
-class UserForumPostsView(LoginRequiredMixin, ListView):
-    model = ForumPost
-    template_name = 'user_forum_posts.html'
-    context_object_name = 'forum_posts'
 
-    def get_queryset(self):
-        return ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
 
-class EditForumPostView(LoginRequiredMixin, UpdateView):
-    model = ForumPost
-    form_class = ForumPostForm
-    template_name = 'edit_forum_post.html'
-    success_url = reverse_lazy('user_forum_posts')
 
-    def get_queryset(self):
-        return ForumPost.objects.filter(user=self.request.user)
-
-class DeleteForumPostView(LoginRequiredMixin, DeleteView):
-    model = ForumPost
-    template_name = 'confirm_delete_forum_post.html'
-    success_url = reverse_lazy('user_forum_posts')
-
-    def get_queryset(self):
-        return ForumPost.objects.filter(user=self.request.user)
 
 class DevProblemsForumView(ListView):
     model = ForumPost
@@ -250,7 +265,7 @@ class CreateCommentView(LoginRequiredMixin, CreateView):
         comment.save()
         forum_post.comment_count = forum_post.comments.count()
         forum_post.save()
-        return redirect('forum_post_detail', post_id=self.kwargs['post_id'])
+        return redirect('forum_post_detail', pk=self.kwargs['post_id'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
