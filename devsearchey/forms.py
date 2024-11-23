@@ -78,9 +78,18 @@ class JobPostForm(forms.ModelForm):
         model = JobPost
         fields = ['post_type', 'title', 'description']
         widgets = {
-            'post_type': forms.Select(),
-            'title': forms.TextInput(attrs={'placeholder': 'Title'}),
-            'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Description', 'maxlength': 200}),
+            'title': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md',
+                'placeholder': 'Enter job title'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'resize-none w-full px-3 py-2 border border-gray-300 rounded-md',
+                'rows': 4,
+                'placeholder': 'Enter job description'
+            }),
+            'post_type': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md'
+            }),
         }
 
 
@@ -88,7 +97,21 @@ class JobPostForm(forms.ModelForm):
 class ForumPostForm(forms.ModelForm):
     class Meta:
         model = ForumPost
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'category']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400',
+                'placeholder': 'Enter post title'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'resize-none w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400',
+                'rows': 4,
+                'placeholder': 'Enter post content'
+            }),
+            'category': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400'
+            }),
+        }
 
 class CommentForm(forms.ModelForm):
     class Meta:

@@ -83,11 +83,13 @@ class CreateJobPostView(LoginRequiredMixin, CreateView):
     model = JobPost
     form_class = JobPostForm
     template_name = 'create_job_post.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('home')  # **Added success_url**
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        form.instance.user = self.request.user  
+        messages.success(self.request, "Job post created successfully!")
         return super().form_valid(form)
+    
 
 class JobPostDetailView(LoginRequiredMixin, DetailView):
     model = JobPost

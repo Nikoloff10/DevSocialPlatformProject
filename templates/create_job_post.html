@@ -1,20 +1,71 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Job Post</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="create-job-container">
-    <h1>Create Job Post</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
-</div>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="create-job-container bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+        <h1 class="text-3xl font-bold text-blue-600 mb-6 text-center">Create Job Post</h1>
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="px-4 py-2 rounded shadow-md bg-{{ message.tags }}-100 text-{{ message.tags }}-800">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Title Field -->
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Title</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.title.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Description Field -->
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Description</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.description.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Job Type Field -->
+            <div>
+                <label for="{{ form.post_type.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Job Type</label>
+                {{ form.post_type }}  <!-- **Updated from form.job_type to form.post_type** -->
+                {% if form.post_type.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.post_type.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Reference Number Field (Conditional) -->
+            {% if form.reference_number %}
+            <div>
+                <label for="{{ form.reference_number.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Reference Number</label>
+                {{ form.reference_number }}
+                {% if form.reference_number.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.reference_number.errors }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Submit Button -->
+            <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors w-full">
+                Submit
+            </button>
+        </form>
+    </div>
 </body>
 </html>
