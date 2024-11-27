@@ -11,12 +11,12 @@ from django.views.generic import ListView, DeleteView, UpdateView, CreateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.permissions import IsAdminUser
 from rest_framework import viewsets
-from devsearchey.forms import CommentForm, ForumPostForm, UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
+from devsearchey.forms import CommentForm, EmailChangeForm, ForumPostForm, UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
 from devsearchey.models import Comment, JobPost, Profile, ForumPost
 from devsearchey.serializers import ForumPostSerializer, CommentSerializer, JobPostSerializer, ProfileSerializer
 from django.db.models import Q, F
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
+from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 from django.contrib import messages
 
 
@@ -56,10 +56,15 @@ class ProfileView(LoginRequiredMixin, UpdateView):
     model = Profile
     form_class = ProfileForm
     template_name = 'profile.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('profile')
 
     def get_object(self):
         return self.request.user.profile
+
+    def get_form_kwargs(self):
+        kwargs = super(ProfileView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -68,9 +73,51 @@ class ProfileView(LoginRequiredMixin, UpdateView):
             context['avatar_url'] = None 
         else:
             context['avatar_url'] = avatar.url if avatar else 'https://res.cloudinary.com/dfxbvixpv/image/upload/v1731942244/j4spsms91wb541cu9bvh.png'
-        # context['forum_posts'] = ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
         context['forum_posts'] = self.request.user.forum_posts.all().order_by('-created_at')
         return context
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your profile has been updated successfully.')
+        return super().form_valid(form)
+
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'change_password.html'
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your password has been changed successfully.')
+        return super().form_valid(form)
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'reset_password.html'
+    email_template_name = 'reset_password_email.html'
+    subject_template_name = 'reset_password_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Password reset instructions have been sent to your email.')
+        return super().form_valid(form)
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'reset_password_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your password has been set. You may go ahead and log in now.')
+        return super().form_valid(form)
+
+class ChangeEmailView(LoginRequiredMixin, FormView):
+    template_name = 'change_email.html'
+    form_class = EmailChangeForm
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        new_email = form.cleaned_data['email']
+        user = self.request.user
+        user.email = new_email
+        user.save()
+        messages.success(self.request, 'Your email has been updated successfully.')
+        return super().form_valid(form)
 
 class DeleteProfileView(LoginRequiredMixin, View):
     def post(self, request):
@@ -234,7 +281,7 @@ class ForumPostDetailView(DetailView):
         context['comments'] = self.object.comments.all().order_by('created_at')
         return context
 
-class CreateForumPostView(LoginRequiredMixin, CreateView):
+class CreateForumPostView(CreateView):
     model = ForumPost
     form_class = ForumPostForm
     template_name = 'create_forum_post.html'

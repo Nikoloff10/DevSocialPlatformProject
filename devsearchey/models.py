@@ -1,4 +1,5 @@
-from datetime import timedelta, timezone
+from datetime import timedelta
+from django.utils import timezone 
 from django.conf import settings
 from cloudinary.models import CloudinaryField
 from django.db import models
