@@ -18,7 +18,7 @@ from django.db.models import Q, F
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 from django.contrib import messages
-
+from django.core.paginator import Paginator
 
 class HomeView(ListView):
     model = JobPost
@@ -79,6 +79,26 @@ class ProfileView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         messages.success(self.request, 'Your profile has been updated successfully.')
         return super().form_valid(form)
+    
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = Profile
+    template_name = 'profile_detail.html'
+    context_object_name = 'profile'
+
+    def get_object(self, queryset=None):
+        username = self.kwargs.get('username')
+        return get_object_or_404(Profile, user__username=username)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        job_posts = JobPost.objects.filter(user=context['profile'].user).order_by('-created_at')
+        paginator = Paginator(job_posts, 10)  # Show 10 posts per page
+
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['user_job_posts'] = page_obj
+        return context
+
 
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'change_password.html'
