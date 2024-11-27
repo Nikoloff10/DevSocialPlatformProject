@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 def delete_expired_posts():
     logger.info("Starting delete_expired_posts task.")
     with transaction.atomic():
-        # Identify posts created by SneakyUser that are older than 1 minute (for testing, should be 1 week for production)
-        expiration_time = timezone.now() - timedelta(minutes=1)  # Change to weeks=1 for production
+        
+        expiration_time = timezone.now() - timedelta(minutes=1)  # timedelta(weeks=1) instead of timedelta(minutes=1) for real world usage
         expired_posts = ForumPost.objects.filter(
             user__username='SneakyUser',
             created_at__lt=expiration_time
