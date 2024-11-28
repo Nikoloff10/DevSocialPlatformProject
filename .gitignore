@@ -40,6 +40,7 @@ static/
 celerybeat-schedule
 celerybeat-schedule.bak
 celerybeat-schedule.dir
+celerybeat-schedule.dat
 
 # IDEs and Editors
 .idea/

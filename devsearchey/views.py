@@ -5,6 +5,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.generic.edit import FormView
+from django.views.generic import TemplateView
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DeleteView, UpdateView, CreateView, DetailView, View
@@ -25,6 +26,9 @@ class HomeView(ListView):
     template_name = 'home.html'
     context_object_name = 'job_posts'
     ordering = ['-created_at']
+
+class AboutView(TemplateView):
+    template_name = 'about.html'
 
 class LoginView(FormView):
     template_name = 'login.html'
@@ -92,7 +96,7 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         job_posts = JobPost.objects.filter(user=context['profile'].user).order_by('-created_at')
-        paginator = Paginator(job_posts, 10)  # Show 10 posts per page
+        paginator = Paginator(job_posts, 10)  
 
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -150,7 +154,7 @@ class CreateJobPostView(LoginRequiredMixin, CreateView):
     model = JobPost
     form_class = JobPostForm
     template_name = 'create_job_post.html'
-    success_url = reverse_lazy('home')  # **Added success_url**
+    success_url = reverse_lazy('home')  
 
     def form_valid(self, form):
         form.instance.user = self.request.user  
@@ -164,16 +168,16 @@ class JobPostDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'job_post'
 
     def get(self, request, *args, **kwargs):
-        # Retrieve the object
+        
         self.object = self.get_object()
         
-        # Increment the views counter using F() to handle concurrency
+        
         JobPost.objects.filter(pk=self.object.pk).update(views=F('views') + 1)
         
-        # Refresh the object from the database to get the updated value
+        
         self.object.refresh_from_db()
         
-        # Proceed with the normal get method
+        
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -181,7 +185,7 @@ class JobPostDetailView(LoginRequiredMixin, DetailView):
         post = self.get_object()
         user = self.request.user
 
-        # Determine if the current user has bookmarked this post
+        
         context['is_bookmarked'] = post.bookmarked_by_profiles.filter(id=user.profile.id).exists()
 
         return context
@@ -190,10 +194,10 @@ class DeleteJobPostView(LoginRequiredMixin, DeleteView):
     model = JobPost
     template_name = 'confirm_delete_job_post.html'
     success_url = reverse_lazy('profile')
-    context_object_name = 'job_post'  # Add this line
+    context_object_name = 'job_post'  
 
     def get_queryset(self):
-        # Ensure that users can only delete their own job posts
+        
         return JobPost.objects.filter(user=self.request.user)
 
     def delete(self, request, *args, **kwargs):
