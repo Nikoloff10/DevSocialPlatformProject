@@ -1,4 +1,5 @@
-from datetime import timedelta, timezone
+from datetime import timedelta
+from django.utils import timezone 
 from django.conf import settings
 from cloudinary.models import CloudinaryField
 from django.db import models
@@ -51,7 +52,7 @@ class ForumPost(models.Model):
         ('dev_problems', 'Dev Problems and Discussions'),
         ('techy_nerds', 'Techy Nerds'),
     ]
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='forum_posts')
     title = models.CharField(max_length=255)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

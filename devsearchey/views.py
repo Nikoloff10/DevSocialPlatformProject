@@ -11,13 +11,14 @@ from django.views.generic import ListView, DeleteView, UpdateView, CreateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.permissions import IsAdminUser
 from rest_framework import viewsets
-from devsearchey.forms import CommentForm, ForumPostForm, UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
+from devsearchey.forms import CommentForm, EmailChangeForm, ForumPostForm, UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
 from devsearchey.models import Comment, JobPost, Profile, ForumPost
 from devsearchey.serializers import ForumPostSerializer, CommentSerializer, JobPostSerializer, ProfileSerializer
 from django.db.models import Q, F
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
-
+from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
+from django.contrib import messages
+from django.core.paginator import Paginator
 
 class HomeView(ListView):
     model = JobPost
@@ -55,10 +56,15 @@ class ProfileView(LoginRequiredMixin, UpdateView):
     model = Profile
     form_class = ProfileForm
     template_name = 'profile.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('profile')
 
     def get_object(self):
         return self.request.user.profile
+
+    def get_form_kwargs(self):
+        kwargs = super(ProfileView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -67,8 +73,71 @@ class ProfileView(LoginRequiredMixin, UpdateView):
             context['avatar_url'] = None 
         else:
             context['avatar_url'] = avatar.url if avatar else 'https://res.cloudinary.com/dfxbvixpv/image/upload/v1731942244/j4spsms91wb541cu9bvh.png'
-        context['forum_posts'] = ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
+        context['forum_posts'] = self.request.user.forum_posts.all().order_by('-created_at')
         return context
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your profile has been updated successfully.')
+        return super().form_valid(form)
+    
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = Profile
+    template_name = 'profile_detail.html'
+    context_object_name = 'profile'
+
+    def get_object(self, queryset=None):
+        username = self.kwargs.get('username')
+        return get_object_or_404(Profile, user__username=username)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        job_posts = JobPost.objects.filter(user=context['profile'].user).order_by('-created_at')
+        paginator = Paginator(job_posts, 10)  # Show 10 posts per page
+
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['user_job_posts'] = page_obj
+        return context
+
+
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'change_password.html'
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your password has been changed successfully.')
+        return super().form_valid(form)
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'reset_password.html'
+    email_template_name = 'reset_password_email.html'
+    subject_template_name = 'reset_password_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Password reset instructions have been sent to your email.')
+        return super().form_valid(form)
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'reset_password_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your password has been set. You may go ahead and log in now.')
+        return super().form_valid(form)
+
+class ChangeEmailView(LoginRequiredMixin, FormView):
+    template_name = 'change_email.html'
+    form_class = EmailChangeForm
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        new_email = form.cleaned_data['email']
+        user = self.request.user
+        user.email = new_email
+        user.save()
+        messages.success(self.request, 'Your email has been updated successfully.')
+        return super().form_valid(form)
 
 class DeleteProfileView(LoginRequiredMixin, View):
     def post(self, request):
@@ -81,11 +150,13 @@ class CreateJobPostView(LoginRequiredMixin, CreateView):
     model = JobPost
     form_class = JobPostForm
     template_name = 'create_job_post.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('home')  # **Added success_url**
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        form.instance.user = self.request.user  
+        messages.success(self.request, "Job post created successfully!")
         return super().form_valid(form)
+    
 
 class JobPostDetailView(LoginRequiredMixin, DetailView):
     model = JobPost
@@ -117,10 +188,17 @@ class JobPostDetailView(LoginRequiredMixin, DetailView):
 
 class DeleteJobPostView(LoginRequiredMixin, DeleteView):
     model = JobPost
+    template_name = 'confirm_delete_job_post.html'
     success_url = reverse_lazy('profile')
+    context_object_name = 'job_post'  # Add this line
 
     def get_queryset(self):
+        # Ensure that users can only delete their own job posts
         return JobPost.objects.filter(user=self.request.user)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Your job post has been successfully deleted.")
+        return super().delete(request, *args, **kwargs)
 
 class ManageJobPostsView(LoginRequiredMixin, ListView):
     model = JobPost
@@ -129,6 +207,33 @@ class ManageJobPostsView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return JobPost.objects.filter(user=self.request.user)
+
+class UserForumPostsView(LoginRequiredMixin, ListView):
+    model = ForumPost
+    template_name = 'user_forum_posts.html'
+    context_object_name = 'forum_posts'
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
+
+class EditForumPostView(LoginRequiredMixin, UpdateView):
+    model = ForumPost
+    form_class = ForumPostForm
+    template_name = 'edit_forum_post.html'
+    success_url = reverse_lazy('user_forum_posts')
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(user=self.request.user)
+
+class DeleteForumPostView(LoginRequiredMixin, DeleteView):
+    model = ForumPost
+    template_name = 'confirm_delete_forum_post.html'
+    success_url = reverse_lazy('user_forum_posts')
+    context_object_name = 'forum_post'
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(user=self.request.user)
+
 
 class BookmarkPostView(LoginRequiredMixin, View):
     def post(self, request, post_id):
@@ -153,30 +258,9 @@ class GetBookmarksView(LoginRequiredMixin, View):
         bookmarks_data = [{'id': post.id, 'title': post.title} for post in bookmarks]
         return JsonResponse({'bookmarks': bookmarks_data})
 
-class UserForumPostsView(LoginRequiredMixin, ListView):
-    model = ForumPost
-    template_name = 'user_forum_posts.html'
-    context_object_name = 'forum_posts'
 
-    def get_queryset(self):
-        return ForumPost.objects.filter(user=self.request.user).order_by('-created_at')
 
-class EditForumPostView(LoginRequiredMixin, UpdateView):
-    model = ForumPost
-    form_class = ForumPostForm
-    template_name = 'edit_forum_post.html'
-    success_url = reverse_lazy('user_forum_posts')
 
-    def get_queryset(self):
-        return ForumPost.objects.filter(user=self.request.user)
-
-class DeleteForumPostView(LoginRequiredMixin, DeleteView):
-    model = ForumPost
-    template_name = 'confirm_delete_forum_post.html'
-    success_url = reverse_lazy('user_forum_posts')
-
-    def get_queryset(self):
-        return ForumPost.objects.filter(user=self.request.user)
 
 class DevProblemsForumView(ListView):
     model = ForumPost
@@ -217,7 +301,7 @@ class ForumPostDetailView(DetailView):
         context['comments'] = self.object.comments.all().order_by('created_at')
         return context
 
-class CreateForumPostView(LoginRequiredMixin, CreateView):
+class CreateForumPostView(CreateView):
     model = ForumPost
     form_class = ForumPostForm
     template_name = 'create_forum_post.html'
@@ -250,7 +334,7 @@ class CreateCommentView(LoginRequiredMixin, CreateView):
         comment.save()
         forum_post.comment_count = forum_post.comments.count()
         forum_post.save()
-        return redirect('forum_post_detail', post_id=self.kwargs['post_id'])
+        return redirect('forum_post_detail', pk=self.kwargs['post_id'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

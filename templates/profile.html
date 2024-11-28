@@ -1,73 +1,112 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Profile</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'profile/styles.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="container">
-    <div class="header">
-        <button class="home-button" onclick="location.href='/'">Home</button>
-        <h1>{{ user.username }}'s Profile</h1>
-        <!-- Dropdown for User's Forum Posts -->
-        <div class="dropdown">
-            <button class="dropbtn">My Forum Posts</button>
-            <button class="manage-job-posts-button" onclick="location.href='{% url 'manage_job_posts' %}'">Manage Job Posts</button>
-            <div class="dropdown-content">
-                {% for post in forum_posts %}
-                    <div class="forum-post">
-                        <h3><a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a></h3>
-                        <p>{{ post.content|truncatewords:30 }}</p>
-                        <p><strong>Posted by:</strong> <strong>{{ post.user.username }}</strong> on {{ post.created_at }}</p>
-                        <p><strong>Comments:</strong> {{ post.comment_count }}</p>
-                        <p><strong>Likes:</strong> {{ post.like_count }}</p>
-                        <a href="{% url 'edit_forum_post' post.id %}">Edit</a>
-                        <a href="{% url 'delete_forum_post' post.id %}">Delete</a>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center">
+    <div class="container bg-white p-8 rounded shadow-md w-full max-w-4xl mt-8">
+        <!-- Header Buttons -->
+        <div class="header flex justify-between items-center mb-6">
+            <button class="home-button bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors" onclick="location.href='/'">Home</button>
+            <div class="buttons flex space-x-4">
+                <button
+                    class="manage-job-posts-button bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600 transition-colors"
+                    onclick="location.href=`{% url 'manage_job_posts' %}`">Manage Job Posts
+                </button>
+                <button
+                    class="my-forum-posts-button bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-600 transition-colors"
+                    onclick="location.href=`{% url 'user_forum_posts' %}`">My Forum Posts
+                </button>
+            </div>
+        </div>
+
+        <!-- Success Messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="px-4 py-2 rounded shadow-md bg-green-100 text-green-800">
+                        {{ message }}
                     </div>
                 {% endfor %}
             </div>
+        {% endif %}
+
+        <!-- Avatar and Profile Title -->
+        <img id="avatarPreview" src="{{ avatar_url }}" alt="Avatar Preview" class="avatar-preview w-32 h-32 rounded-full mx-auto mb-6"/>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">{{ user.username }}'s Profile</h1>
+
+        <!-- Profile Update Form -->
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group flex flex-col">
+                <label for="id_username" class="mb-2 font-semibold text-gray-700">Username:</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+            <div class="form-group flex flex-col">
+                <label for="id_email" class="mb-2 font-semibold text-gray-700">Email:</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+                <!-- Change Email Button -->
+                <button type="button" onclick="location.href=`{% url 'change_email' %}`" class="mt-2 bg-green-500 text-white font-semibold py-2 px-4 rounded hover:bg-green-600 transition-colors">
+                    Change Email
+                </button>
+            </div>
+            <div class="form-group flex flex-col">
+                <label for="id_first_name" class="mb-2 font-semibold text-gray-700">First Name:</label>
+                {{ form.first_name }}
+                {{ form.first_name.errors }}
+            </div>
+            <div class="form-group flex flex-col">
+                <label for="id_last_name" class="mb-2 font-semibold text-gray-700">Last Name:</label>
+                {{ form.last_name }}
+                {{ form.last_name.errors }}
+            </div>
+            <div class="form-group flex flex-col">
+                <label for="id_avatar" class="mb-2 font-semibold text-gray-700">Choose Avatar Pic:</label>
+                {{ form.avatar }}
+                {{ form.avatar.errors }}
+            </div>
+            <div class="form-group flex flex-col resize-none">
+                <label for="id_bio" class="mb-2 font-semibold text-gray-700">Bio:</label>
+                {{ form.bio }}
+                {{ form.bio.errors }}
+            </div>
+            <div class="form-group flex flex-col">
+                <label for="id_github" class="mb-2 font-semibold text-gray-700">GitHub URL:</label>
+                {{ form.github }}
+                {{ form.github.errors }}
+            </div>
+            <div class="form-group flex flex-col">
+                <label for="id_website" class="mb-2 font-semibold text-gray-700">Personal Website:</label>
+                {{ form.website }}
+                {{ form.website.errors }}
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors">Update Profile</button>
+        </form>
+
+        <!-- Additional Actions -->
+        <div class="mt-6 flex justify-between">
+            <a href="{% url 'change_password' %}" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors">
+                Change Password
+            </a>
+            <a href="{% url 'password_reset' %}" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors">
+                Reset Password via Email
+            </a>
         </div>
+
+        <!-- Delete Profile Form -->
+        <form action="{% url 'delete_profile' %}" method="post" class="mt-6" onsubmit="return confirm('Are you sure you want to delete your profile? This action cannot be undone.');">
+            {% csrf_token %}
+            <button type="submit" name="delete_profile" class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 transition-colors">Delete Profile</button>
+        </form>
     </div>
-    <img id="avatarPreview" src="{{ avatar_url }}" alt="Avatar Preview" class="avatar-preview"/>
-    <form action="{% url 'profile' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_avatar" class="custom-file-upload">Choose Avatar Pic</label>
-            <p>{{ form.avatar }}</p>
-        </div>
-        <div class="form-group">
-            <label>First Name:</label> {{ user.first_name }}
-        </div>
-        <div class="form-group">
-            <label>Last Name:</label> {{ user.last_name }}
-        </div>
-        <div class="form-group">
-            <label>Email:</label> {{ user.email }}
-            <button type="button" onclick="location.href='/change-email'" style="display: block; margin: 10px auto;">
-                Change Email
-            </button>
-        </div>
-        <div class="form-group">
-            {{ form.bio.label_tag }}
-            {{ form.bio }}
-        </div>
-        <div class="form-group">
-            {{ form.github.label_tag }}
-            {{ form.github }}
-        </div>
-        <button type="submit">Update</button>
-    </form>
-    <form action="{% url 'delete_profile' %}" method="post" style="margin-top: 20px;" onsubmit="return confirmDeleteProfile();">
-        {% csrf_token %}
-        <button type="submit" name="delete_profile">Delete Profile</button>
-    </form>
-    <button type="button" onclick="location.href='/reset-password'">Reset Password</button>
-</div>
 <script>
     function confirmDeleteProfile() {
         return confirm("Are you sure you want to delete your profile?");
@@ -78,6 +117,26 @@
             document.getElementById('avatarPreview').src = URL.createObjectURL(file);
         }
     });
+
+    // Toggle dropdown visibility
+    document.querySelector('.dropbtn').addEventListener('click', function (event) {
+        event.stopPropagation(); // Prevent the click from bubbling up to the window
+        const dropdownContent = this.nextElementSibling;
+        dropdownContent.classList.toggle('hidden');
+    });
+
+    // Close the dropdown if the user clicks outside of it
+    window.addEventListener('click', function (event) {
+        if (!event.target.matches('.dropbtn')) {
+            const dropdowns = document.querySelectorAll('.dropdown-content');
+            dropdowns.forEach(dropdown => {
+                if (!dropdown.classList.contains('hidden')) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+    });
+
 </script>
 </body>
 </html>

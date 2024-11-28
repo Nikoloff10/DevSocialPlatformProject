@@ -1,28 +1,74 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <h1>Search Results</h1>
-    <h2>Profiles</h2>
-    <ul>
-        {% for profile in profiles %}
-        <li>{{ profile.user.username }} - {{ profile.user.email }}</li>
-        {% endfor %}
-    </ul>
-    <h2>Job Posts</h2>
-    <ul>
-        {% for post in job_posts %}
-        <li>{{ post.title }} - {{ post.reference_number }}</li>
-        {% endfor %}
-    </ul>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-bold text-center text-blue-600 mb-8">Search Results</h1>
 
+        <!-- Buttons Section -->
+        <div class="flex justify-center space-x-4 mb-12">
+            <button onclick="location.href='/'"
+                class="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors">
+                Home
+            </button>
+            <button onclick="location.href=`{% url 'profile' %}`"
+                class="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors">
+                Profile
+            </button>
+        </div>
+
+        <!-- Profiles Section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Profiles</h2>
+            <ul class="space-y-4">
+                {% for profile in profiles %}
+                <li
+                    class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition-shadow flex justify-between items-center">
+                    <a href="{% url 'profile_detail' username=profile.user.username %}"
+                        class="text-lg text-blue-500 hover:underline">
+                        {{ profile.user.username }}
+                    </a>
+                    <span class="text-gray-500">{{ profile.user.email }}</span>
+                </li>
+                {% empty %}
+                <li
+                    class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition-shadow flex flex-col items-center">
+                    <span class="text-lg text-gray-700 mb-4">No such profiles...</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Job Posts Section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Job Posts</h2>
+            <ul class="space-y-4">
+                {% for post in job_posts %}
+                <li class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-medium text-blue-600">{{ post.title }}</span>
+                        <span class="text-gray-500">Ref: {{ post.reference_number }}</span>
+                    </div>
+                </li>
+                {% empty %}
+                <li
+                    class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition-shadow flex flex-col items-center">
+                    <span class="text-lg text-gray-700 mb-4">No such posts...</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </body>
 
 </html>
-
