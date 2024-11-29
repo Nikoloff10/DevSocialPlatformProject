@@ -32,6 +32,11 @@ class JobPost(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.title}"
+    
+    class Meta:
+        permissions = [
+            ("delete_explicit_jobpost", "Can delete job posts containing explicit language"),
+        ]
 
 
 class Profile(models.Model):
@@ -45,7 +50,10 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user.username)
 
-
+    class Meta:
+        permissions = [
+            ("delete_bad_bio", "Can delete user bios containing bad language"),
+        ]
 
 class ForumPost(models.Model):
     CATEGORY_CHOICES = [
@@ -69,7 +77,11 @@ class ForumPost(models.Model):
         if self.user and self.user.username == 'SneakyUser':
             return timezone.now() > self.created_at + timedelta(minutes=1)
         return False
-        
+    
+    class Meta:
+        permissions = [
+            ("delete_explicit_forumpost", "Can delete forum posts containing explicit language"),
+        ]
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
