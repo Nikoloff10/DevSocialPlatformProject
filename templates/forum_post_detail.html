@@ -46,7 +46,7 @@
             </div>
         </div>
         
-        <!-- Updated Comments Section -->
+        
         <div class="max-h-96 overflow-y-auto p-4 bg-gray-50 rounded flex-grow">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4">Comments</h2>
             {% for comment in comments %}
@@ -69,7 +69,7 @@
     </div>
     <script>
         function likeForumPost(postId) {
-            fetch(`/forum-post/${postId}/like/`, {
+            fetch(`/api/forum-posts/${postId}/like/`, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}',

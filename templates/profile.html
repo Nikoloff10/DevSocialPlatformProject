@@ -10,7 +10,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center">
     <div class="container bg-white p-8 rounded shadow-md w-full max-w-4xl mt-8">
-        <!-- Header Buttons -->
+        
         <div class="header flex justify-between items-center mb-6">
             <button class="home-button bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors" onclick="location.href='/'">Home</button>
             <div class="buttons flex space-x-4">
@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <!-- Success Messages -->
+        
         {% if messages %}
             <div class="mb-4">
                 {% for message in messages %}
@@ -36,11 +36,11 @@
             </div>
         {% endif %}
 
-        <!-- Avatar and Profile Title -->
+        
         <img id="avatarPreview" src="{{ avatar_url }}" alt="Avatar Preview" class="avatar-preview w-32 h-32 rounded-full mx-auto mb-6"/>
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">{{ user.username }}'s Profile</h1>
 
-        <!-- Profile Update Form -->
+        
         <form method="post" enctype="multipart/form-data" class="space-y-6">
             {% csrf_token %}
             {{ form.non_field_errors }}
@@ -53,7 +53,7 @@
                 <label for="id_email" class="mb-2 font-semibold text-gray-700">Email:</label>
                 {{ form.email }}
                 {{ form.email.errors }}
-                <!-- Change Email Button -->
+                
                 <button type="button" onclick="location.href=`{% url 'change_email' %}`" class="mt-2 bg-green-500 text-white font-semibold py-2 px-4 rounded hover:bg-green-600 transition-colors">
                     Change Email
                 </button>
@@ -73,7 +73,7 @@
                 {{ form.avatar }}
                 {{ form.avatar.errors }}
             </div>
-            <div class="form-group flex flex-col resize-none">
+            <div class="form-group flex flex-col">
                 <label for="id_bio" class="mb-2 font-semibold text-gray-700">Bio:</label>
                 {{ form.bio }}
                 {{ form.bio.errors }}
@@ -91,7 +91,7 @@
             <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition-colors">Update Profile</button>
         </form>
 
-        <!-- Additional Actions -->
+        
         <div class="mt-6 flex justify-between">
             <a href="{% url 'change_password' %}" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors">
                 Change Password
@@ -101,42 +101,58 @@
             </a>
         </div>
 
-        <!-- Delete Profile Form -->
+        
         <form action="{% url 'delete_profile' %}" method="post" class="mt-6" onsubmit="return confirm('Are you sure you want to delete your profile? This action cannot be undone.');">
             {% csrf_token %}
             <button type="submit" name="delete_profile" class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 transition-colors">Delete Profile</button>
         </form>
     </div>
-<script>
-    function confirmDeleteProfile() {
-        return confirm("Are you sure you want to delete your profile?");
-    }
-    document.getElementById('id_avatar').addEventListener('change', function (event) {
-        const [file] = event.target.files;
-        if (file) {
-            document.getElementById('avatarPreview').src = URL.createObjectURL(file);
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/profiles/me/')
+                .then(response => response.json())
+                .then(profile => {
+                    document.getElementById('id_username').value = profile.user.username;
+                    document.getElementById('id_email').value = profile.user.email;
+                    document.getElementById('id_first_name').value = profile.user.first_name;
+                    document.getElementById('id_last_name').value = profile.user.last_name;
+                    document.getElementById('id_bio').value = profile.bio;
+                    document.getElementById('id_github').value = profile.github;
+                    document.getElementById('id_website').value = profile.website;
+                    document.getElementById('avatarPreview').src = profile.avatar_url;
+                })
+                .catch(error => console.error('Error fetching profile:', error));
+        });
+
+        function confirmDeleteProfile() {
+            return confirm("Are you sure you want to delete your profile?");
         }
-    });
 
-    // Toggle dropdown visibility
-    document.querySelector('.dropbtn').addEventListener('click', function (event) {
-        event.stopPropagation(); // Prevent the click from bubbling up to the window
-        const dropdownContent = this.nextElementSibling;
-        dropdownContent.classList.toggle('hidden');
-    });
+        document.getElementById('id_avatar').addEventListener('change', function (event) {
+            const [file] = event.target.files;
+            if (file) {
+                document.getElementById('avatarPreview').src = URL.createObjectURL(file);
+            }
+        });
 
-    // Close the dropdown if the user clicks outside of it
-    window.addEventListener('click', function (event) {
-        if (!event.target.matches('.dropbtn')) {
-            const dropdowns = document.querySelectorAll('.dropdown-content');
-            dropdowns.forEach(dropdown => {
-                if (!dropdown.classList.contains('hidden')) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-        }
-    });
+        // Toggle dropdown visibility
+        document.querySelector('.dropbtn').addEventListener('click', function (event) {
+            event.stopPropagation(); // Prevent the click from bubbling up to the window
+            const dropdownContent = this.nextElementSibling;
+            dropdownContent.classList.toggle('hidden');
+        });
 
-</script>
+        // Close the dropdown if the user clicks outside of it
+        window.addEventListener('click', function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                const dropdowns = document.querySelectorAll('.dropdown-content');
+                dropdowns.forEach(dropdown => {
+                    if (!dropdown.classList.contains('hidden')) {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

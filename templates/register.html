@@ -1,4 +1,6 @@
 {% load static %}
+{% load socialaccount %}
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -41,6 +43,11 @@
             </div>
             <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">Register</button>
         </form>
+        <div class="social-login mt-6 text-center">
+            <p class="text-gray-700 mb-2">Or register with:</p>
+            <a href="{% url 'google_login' %}" class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-colors inline-block text-center mb-2">Google</a>
+            <a href="{% url 'github_login' %}" class="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900 transition-colors inline-block text-center">GitHub</a>
+        </div>
     </div>
     </body>
 </html>

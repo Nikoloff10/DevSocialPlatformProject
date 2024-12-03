@@ -47,5 +47,7 @@ urlpatterns = [
     path('change-email/', ChangeEmailView.as_view(), name='change_email'),
 
     
+
+    
     path('api/', include(router.urls)),
 ]

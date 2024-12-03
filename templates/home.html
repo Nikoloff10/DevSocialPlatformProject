@@ -195,7 +195,7 @@
                         showModal();
                         return;
                     }
-                    fetch(`/bookmark-post/${postId}/`, {
+                    fetch(`/api/job-posts/${postId}/bookmark/`, {
                         method: 'POST',
                         headers: {
                             'X-CSRFToken': getCSRFToken(),
@@ -260,8 +260,6 @@
                     dropdown.classList.toggle('hidden');
                 });
             }
-
-
 
             // Initial call to populate the dropdown on page load
             updateBookmarkDropdown();

@@ -7,11 +7,14 @@ from django.contrib.auth.models import User
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import AuthenticationForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DeleteView, UpdateView, CreateView, DetailView, View
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from devsearchey.forms import CommentForm, EmailChangeForm, ForumPostForm, UserLoginForm, UserRegistrationForm, ProfileForm, JobPostForm
 from devsearchey.models import Comment, JobPost, Profile, ForumPost
 from devsearchey.serializers import ForumPostSerializer, CommentSerializer, JobPostSerializer, ProfileSerializer
@@ -20,6 +23,13 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 from django.contrib import messages
 from django.core.paginator import Paginator
+
+
+
+
+
+
+
 
 class HomeView(ListView):
     model = JobPost
@@ -315,7 +325,10 @@ class CreateForumPostView(CreateView):
         if self.request.user.is_authenticated:
             forum_post.user = self.request.user
         else:
-            sneaky_user = User.objects.get(username='SneakyUser')
+            try:
+                sneaky_user = User.objects.get(username='SneakyUser')
+            except User.DoesNotExist:
+                sneaky_user = User.objects.create_user(username='SneakyUser', password='yourpassword')
             forum_post.user = sneaky_user
         forum_post.category = self.request.POST.get('category', 'dev_problems')
         forum_post.save()
@@ -371,22 +384,59 @@ class LikeCommentView(LoginRequiredMixin, View):
         comment.save()
         return JsonResponse({'action': action, 'like_count': comment.like_count})
 
+
+
 class ForumPostViewSet(viewsets.ModelViewSet):
     queryset = ForumPost.objects.all()
     serializer_class = ForumPostSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def like(self, request, pk=None):
+        forum_post = self.get_object()
+        user = request.user
+        if user in forum_post.likes.all():
+            forum_post.likes.remove(user)
+            action = 'unliked'
+        else:
+            forum_post.likes.add(user)
+            action = 'liked'
+        forum_post.like_count = forum_post.likes.count()
+        forum_post.save()
+        return Response({'action': action, 'like_count': forum_post.like_count})
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class JobPostViewSet(viewsets.ModelViewSet):
     queryset = JobPost.objects.all()
     serializer_class = JobPostSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def bookmark(self, request, pk=None):
+        job_post = self.get_object()
+        profile = request.user.profile
+        if job_post in profile.bookmarked_posts.all():
+            profile.bookmarked_posts.remove(job_post)
+            action = 'removed'
+        else:
+            profile.bookmarked_posts.add(job_post)
+            action = 'added'
+        job_post.bookmark_count = job_post.bookmarked_by_profiles.count()
+        job_post.save()
+        return Response({'action': action, 'bookmark_count': job_post.bookmark_count})
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
+    def me(self, request):
+        profile = request.user.profile
+        serializer = self.get_serializer(profile)
+        return Response(serializer.data)
+    

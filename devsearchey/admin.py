@@ -5,6 +5,12 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.utils.translation import gettext_lazy as _
 from .models import ForumPost, Comment, JobPost, Profile
+from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
+from allauth.socialaccount.admin import SocialAppAdmin, SocialAccountAdmin, SocialTokenAdmin
+from django.contrib.sites.models import Site
+from django.contrib.sites.admin import SiteAdmin
+
+
 
 class MyAdminSite(AdminSite):
     site_header = _("DevSearchey Admin")
@@ -59,3 +65,9 @@ admin_site.register(ForumPost, ForumPostAdmin)
 admin_site.register(Comment, CommentAdmin)
 admin_site.register(JobPost, JobPostAdmin)
 admin_site.register(Profile, ProfileAdmin)
+
+admin_site.register(SocialApp, SocialAppAdmin)
+admin_site.register(SocialAccount, SocialAccountAdmin)
+admin_site.register(SocialToken, SocialTokenAdmin)
+
+admin_site.register(Site, SiteAdmin)

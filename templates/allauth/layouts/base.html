@@ -1,0 +1,58 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block head_title %}
+        {% endblock head_title %}
+    </title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% block extra_head %}
+    {% endblock extra_head %}
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div>
+        {% block body %}
+            {% if messages %}
+                <div class="mb-4">
+                    <strong class="block text-lg font-semibold text-gray-700 mb-2">{% trans "Messages:" %}</strong>
+                    <ul class="list-disc list-inside space-y-2">
+                        {% for message in messages %}
+                            <li class="text-gray-600">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <div>
+                
+                <ul class="space-y-2">
+                    {% url 'account_login' as login_url_ %}
+                    {% if login_url_ %}
+                        <li>
+                            <a href="{{ login_url_ }}" class="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+                                {% trans "Sign In" %}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% url 'account_signup' as signup_url_ %}
+                    {% if signup_url_ %}
+                        <li>
+                            <a href="{{ signup_url_ }}" class="block bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors">
+                                {% trans "Sign Up" %}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% block content %}
+            {% endblock content %}
+        {% endblock body %}
+    </div>
+    {% block extra_body %}
+    {% endblock extra_body %}
+</body>
+</html>

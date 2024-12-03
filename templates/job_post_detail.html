@@ -52,47 +52,47 @@
             </div>
         {% endif %}
     </div>
-<script>
-    document.querySelectorAll('.bookmark-post').forEach(function(button) {
-        button.addEventListener('click', function() {
-            const postId = this.getAttribute('data-post-id');
-            fetch(`/bookmark-post/${postId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.action === 'added') {
-                    this.textContent = 'Remove Bookmark';
-                    // Update the bookmark status text
-                    const statusText = document.querySelector('.bookmark-status');
-                    if(statusText){
-                        statusText.textContent = 'Bookmarked by you';
-                        statusText.style.color = 'green';
+    <script>
+        document.querySelectorAll('.bookmark-post').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                fetch(`/api/job-posts/${postId}/bookmark/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
                     }
-                } else {
-                    this.textContent = 'Bookmark it';
-                    // Update the bookmark status text
-                    const statusText = document.querySelector('.bookmark-status');
-                    if(statusText){
-                        statusText.textContent = 'Not bookmarked by you';
-                        statusText.style.color = 'red';
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.action === 'added') {
+                        this.textContent = 'Remove Bookmark';
+                        // Update the bookmark status text
+                        const statusText = document.querySelector('.bookmark-status');
+                        if(statusText){
+                            statusText.textContent = 'Bookmarked by you';
+                            statusText.style.color = 'green';
+                        }
+                    } else {
+                        this.textContent = 'Bookmark it';
+                        // Update the bookmark status text
+                        const statusText = document.querySelector('.bookmark-status');
+                        if(statusText){
+                            statusText.textContent = 'Not bookmarked by you';
+                            statusText.style.color = 'red';
+                        }
                     }
-                }
-                // Update the bookmark counter
-                const bookmarkCounter = document.querySelector('.bookmark-counter p');
-                if(bookmarkCounter){
-                    bookmarkCounter.textContent = `Bookmarks: ${data.bookmark_count}`;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+                    // Update the bookmark counter
+                    const bookmarkCounter = document.querySelector('.bookmark-counter p');
+                    if(bookmarkCounter){
+                        bookmarkCounter.textContent = `Bookmarks: ${data.bookmark_count}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
