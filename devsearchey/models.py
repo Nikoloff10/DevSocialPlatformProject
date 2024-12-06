@@ -25,9 +25,12 @@ class JobPost(models.Model):
     reference_number = models.CharField(max_length=10, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.post_type == self.JOB_OFFERING and not self.reference_number:
-            self.reference_number = f"REF{self.pk:06d}"
+        if not self.pk:
+            super().save(*args, **kwargs)
+            if self.post_type == self.JOB_OFFERING:
+                self.reference_number = f"REF{self.pk:06d}"
+            self.save(update_fields=['reference_number'])
+        else:
             super().save(*args, **kwargs)
 
     def __str__(self):
@@ -37,6 +40,7 @@ class JobPost(models.Model):
         permissions = [
             ("delete_explicit_jobpost", "Can delete job posts containing explicit language"),
         ]
+
 
 
 class Profile(models.Model):
