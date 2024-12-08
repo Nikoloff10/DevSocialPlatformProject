@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
 from devsearchey.models import Profile, JobPost, ForumPost, Comment
