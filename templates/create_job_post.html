@@ -12,20 +12,12 @@
     <div class="create-job-container bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
         <h1 class="text-3xl font-bold text-blue-600 mb-6 text-center">Create Job Post</h1>
 
-        {% if messages %}
-            <div class="mb-4">
-                {% for message in messages %}
-                    <div class="px-4 py-2 rounded shadow-md bg-{{ message.tags }}-100 text-{{ message.tags }}-800">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+        
 
         <form method="post" class="space-y-6">
             {% csrf_token %}
             
-            <!-- Post Type Field -->
+            
             <div>
                 <label for="{{ form.post_type.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Job Type</label>
                 {{ form.post_type }}
@@ -34,7 +26,7 @@
                 {% endif %}
             </div>
 
-            <!-- Title Field -->
+            
             <div>
                 <label for="{{ form.title.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Title</label>
                 {{ form.title }}
@@ -43,7 +35,7 @@
                 {% endif %}
             </div>
             
-            <!-- Description Field -->
+            
             <div>
                 <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Description</label>
                 {{ form.description }}
@@ -52,7 +44,7 @@
                 {% endif %}
             </div>
             
-            <!-- Submit Button -->
+            
             <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors w-full">
                 Submit
             </button>

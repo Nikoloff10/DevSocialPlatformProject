@@ -440,3 +440,28 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(profile)
         return Response(serializer.data)
     
+# class GoogleLoginView(View):
+#     def get(self, request, *args, **kwargs):
+#         return render(request, 'google_login.html')
+
+# class CustomGoogleOAuth2Adapter(GoogleOAuth2Adapter):
+#     def get_callback_url(self, request, app):
+#         return reverse('google_callback')
+
+# class CustomGoogleOAuth2LoginView(OAuth2LoginView):
+#     adapter_class = CustomGoogleOAuth2Adapter
+#     client_class = OAuth2Client
+#     callback_url = 'http://127.0.0.1:8000/accounts/google/login/callback/'
+
+# class CustomGoogleOAuth2CallbackView(OAuth2CallbackView):
+#     adapter_class = CustomGoogleOAuth2Adapter
+#     client_class = OAuth2Client
+
+#     def dispatch(self, request, *args, **kwargs):
+#         app = SocialApp.objects.get(provider='google')
+#         client = self.client_class(request, app.client_id, app.secret, self.adapter_class().get_callback_url(request, app))
+#         token = client.get_access_token(request.GET.get('code'))
+#         login = self.adapter_class().complete_login(request, app, token, response=token.token)
+#         login.token = token
+#         login.state = get_adapter(request).get_login_state(request)
+#         return complete_social_login(request, login)
