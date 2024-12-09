@@ -1,4 +1,5 @@
 
+from logging import config
 import os
 from pathlib import Path
 import cloudinary
@@ -188,3 +189,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 SOCIAL_AUTH_GITHUB_KEY = os.getenv('GITHUB_CLIENT_ID')
 SOCIAL_AUTH_GITHUB_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://devsearchey-g5dfdtcqg5cbcnab.italynorth-01.azurewebsites.net',
+]
