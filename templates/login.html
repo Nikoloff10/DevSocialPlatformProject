@@ -5,24 +5,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-<div class="container bg-white p-8 rounded shadow-md w-full max-w-md">
-    <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Hello Again!</h1>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen text-gray-200">
+<div class="container bg-gray-800 p-8 rounded shadow-md w-full max-w-md mx-4">
+    <h1 class="text-2xl font-bold text-center mb-6 text-purple-400">Hello Again!</h1>
     <form action="{% url 'login' %}" method="post" class="space-y-4">
         {% csrf_token %}
         <div class="form-group flex flex-col">
-            {{ form.username.label_tag }}
+            <label for="id_username" class="mb-2 text-gray-300">{{ form.username.label_tag }}</label>
             {{ form.username }}
         </div>
         <div class="form-group flex flex-col">
-            {{ form.password.label_tag }}
+            <label for="id_password" class="mb-2 text-gray-300">{{ form.password.label_tag }}</label>
             {{ form.password }}
         </div>
         {% if form.non_field_errors %}
@@ -30,17 +29,30 @@
                 {{ form.non_field_errors }}
             </div>
         {% endif %}
-        <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">Login</button>
+        <button type="submit" class="w-full bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 transition-colors">Login</button>
     </form>
     <div class="social-login mt-6 text-center">
-        <p class="text-gray-700 mb-2">Or login with:</p>
+        <p class="text-gray-400 mb-2">Or login with:</p>
         <a href="{% url 'google_login' %}" class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-colors inline-block text-center mb-2">Google</a>
-        <a href="{% url 'github_login' %}" class="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900 transition-colors inline-block text-center">GitHub</a>
+        <a href="{% url 'github_login' %}" class="w-full bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors inline-block text-center">GitHub</a>
     </div>
     <div class="register-suggestion mt-6 text-center">
-        <p class="text-gray-700 mb-2">Maybe you don't have an account?</p>
-        <button onclick="location.href=`{% url 'register' %}`" class="btn btn-primary bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors">Register</button>
+        <p class="text-gray-400 mb-2">Maybe you don't have an account?</p>
+        <button onclick="location.href=`{% url 'register' %}`" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors">Register</button>
     </div>
 </div>
+<style>
+    input {
+        background-color: #4a5568;
+        color: #767f8a;
+        border: 1px solid #718096; 
+        border-radius: 0.25rem; 
+        padding: 0.5rem 1rem; 
+    }
+    input:focus {
+        outline: none; 
+        border-color: #a0aec0; 
+    }
+</style>
 </body>
 </html>

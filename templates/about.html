@@ -3,25 +3,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - DevSearchey</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-16">
-        
-        <a href="{% url 'home' %}" class="inline-block bg-purple-500 text-white font-bold py-2 px-4 rounded hover:bg-purple-700 transition duration-300">Home</a>
-        <div class="bg-white shadow-md rounded-lg p-8 mt-8">
-            <h1 class="text-4xl font-bold mb-4">About DevSearchey</h1>
-            <p class="text-gray-700 mb-4">
+<body class="bg-gray-900 text-gray-100">
+    <div class="container mx-auto px-4 py-8 md:py-16">
+
+        <a href="{% url 'home' %}" class="inline-block bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-800 transition duration-300">Home</a>
+        <div class="bg-gray-800 shadow-md rounded-lg p-8 mt-8">
+            <h1 class="text-4xl font-bold mb-4 text-white">About DevSearchey</h1>
+            <p class="mb-4">
                 DevSearchey is a comprehensive social networking platform tailored specifically for developers. Our mission is to foster a community where developers can connect, collaborate, and grow together. Whether you're a seasoned professional or just starting your coding journey, DevSearchey provides the tools and environment you need to succeed.
             </p>
-            
+
             <h2 class="text-2xl font-semibold mt-6 mb-2">Who Is It For?</h2>
-            <p class="text-gray-700 mb-4">
+            <p class="mb-4">
                 DevSearchey is designed for:
             </p>
-            <ul class="list-disc list-inside text-gray-700 mb-4">
+            <ul class="list-disc list-inside mb-4">
                 <li>Software Developers</li>
                 <li>Web Developers</li>
                 <li>Mobile App Developers</li>
@@ -29,9 +30,9 @@
                 <li>DevOps Engineers</li>
                 <li>Anyone passionate about coding and technology</li>
             </ul>
-            
+
             <h2 class="text-2xl font-semibold mt-6 mb-2">Features</h2>
-            <ul class="list-disc list-inside text-gray-700 mb-4">
+            <ul class="list-disc list-inside mb-4">
                 <li><strong>User Authentication:</strong> Secure registration and login functionalities to manage user accounts.</li>
                 <li><strong>User Profiles:</strong> Create and customize profiles with avatars, bios, and social links.</li>
                 <li><strong>Job Postings:</strong> Browse and create job listings tailored for developers.</li>
@@ -40,9 +41,9 @@
                 <li><strong>Password Management:</strong> Securely change and reset your passwords.</li>
                 <li><strong>Responsive Design:</strong> Access the platform seamlessly across all devices.</li>
             </ul>
-            
-            <h2 class="text-2xl font-semibold mt-6 mb-2">How to Use DevSocialPlatform</h2>
-            <ol class="list-decimal list-inside text-gray-700 mb-4">
+
+            <h2 class="text-2xl font-semibold mt-6 mb-2">How to Use DevSearchey</h2>
+            <ol class="list-decimal list-inside mb-4">
                 <li><strong>Register:</strong> Sign up for an account using your email and create a unique username.</li>
                 <li><strong>Complete Your Profile:</strong> Add an avatar, bio, and links to your GitHub or personal website.</li>
                 <li><strong>Browse Job Postings:</strong> Explore current job opportunities posted by freelancers looking for a helping hand.</li>
@@ -51,14 +52,14 @@
                 <li><strong>Bookmark Content:</strong> Save posts and job listings you find interesting for future reference.</li>
                 <li><strong>Connect with Others:</strong> Network with other developers, collaborate on projects, and expand your professional circle.</li>
             </ol>
-            
+
             <h2 class="text-2xl font-semibold mt-6 mb-2">Contact Us</h2>
-            <p class="text-gray-700 mb-4">
+            <p class="mb-4">
                 We're here to help and would love to hear from you! If you have any questions, suggestions, or need support, feel free to reach out through the following channels:
             </p>
-            <ul class="list-none text-gray-700">
-                <li><strong>Email:</strong> <a href="mailto:nikoloff.ftw@gmail.com" class="text-blue-500 hover:underline">nikoloff.ftw@gmail.com</a></li>
-                <li><strong>Phone:</strong> <a href="tel:0918273645" class="text-blue-500 hover:underline">0918 273 645</a></li>
+            <ul class="list-none">
+                <li><strong>Email:</strong> <a href="mailto:nikoloff.ftw@gmail.com" class="text-blue-400 hover:underline">nikoloff.ftw@gmail.com</a></li>
+                <li><strong>Phone:</strong> <a href="tel:0918273645" class="text-blue-400 hover:underline">0918 273 645</a></li>
             </ul>
         </div>
     </div>

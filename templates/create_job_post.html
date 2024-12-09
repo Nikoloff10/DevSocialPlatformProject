@@ -8,44 +8,33 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="create-job-container bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-        <h1 class="text-3xl font-bold text-blue-600 mb-6 text-center">Create Job Post</h1>
-
-        
-
+<body class="bg-gray-900 min-h-screen flex items-center justify-center">
+    <div class="create-job-container bg-gray-800 shadow-lg rounded-lg p-8 max-w-md w-full">
+        <h1 class="text-3xl font-bold text-blue-400 mb-6 text-center">Create Job Post</h1>
         <form method="post" class="space-y-6">
             {% csrf_token %}
-            
-            
             <div>
-                <label for="{{ form.post_type.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Job Type</label>
+                <label for="{{ form.post_type.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Job Type</label>
                 {{ form.post_type }}
                 {% if form.post_type.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ form.post_type.errors }}</p>
                 {% endif %}
             </div>
-
-            
             <div>
-                <label for="{{ form.title.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Title</label>
+                <label for="{{ form.title.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Title</label>
                 {{ form.title }}
                 {% if form.title.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ form.title.errors }}</p>
                 {% endif %}
             </div>
-            
-            
             <div>
-                <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Description</label>
+                <label for="{{ form.description.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Description</label>
                 {{ form.description }}
                 {% if form.description.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ form.description.errors }}</p>
                 {% endif %}
             </div>
-            
-            
-            <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors w-full">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors w-full">
                 Submit
             </button>
         </form>

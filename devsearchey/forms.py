@@ -43,8 +43,19 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.Form):
-    username = forms.CharField(max_length=150)
-    password = forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400',
+            'placeholder': 'Username'
+        })
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400',
+            'placeholder': 'Password'
+        })
+    )
 
 
 
@@ -56,22 +67,15 @@ class ProfileForm(forms.ModelForm):
         max_length=150,
         required=True,
         widget=forms.TextInput(attrs={
-            'class': 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-400',
             'placeholder': 'Username'
-        })
-    )
-    email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(attrs={
-            'class': 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
-            'placeholder': 'Email'
         })
     )
     first_name = forms.CharField(
         max_length=30,
         required=False,
         widget=forms.TextInput(attrs={
-            'class': 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-400',
             'placeholder': 'First Name'
         })
     )
@@ -79,38 +83,49 @@ class ProfileForm(forms.ModelForm):
         max_length=150,
         required=False,
         widget=forms.TextInput(attrs={
-            'class': 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-400',
             'placeholder': 'Last Name'
+        })
+    )
+    bio = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none',
+            'placeholder': 'Tell us about yourself...',
+            'rows': 4
+        })
+    )
+    github = forms.URLField(
+        required=False,
+        widget=forms.URLInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-400',
+            'placeholder': 'GitHub Profile URL'
+        })
+    )
+    website = forms.URLField(
+        required=False,
+        widget=forms.URLInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-400',
+            'placeholder': 'Personal Website URL'
+        })
+    )
+    avatar = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-purple-400'
         })
     )
 
     class Meta:
         model = Profile
-        fields = ['avatar', 'bio', 'github', 'website']
-        widgets = {
-            'bio': forms.Textarea(attrs={
-                'class': 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none',
-                'placeholder': 'Tell us about yourself...',
-                'rows': 4
-            }),
-            'github': forms.URLInput(attrs={
-                'class': 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
-                'placeholder': 'GitHub Profile URL'
-            }),
-            'website': forms.URLInput(attrs={
-                'class': 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
-                'placeholder': 'Personal Website URL'
-            }),
-        }
+        fields = ['username', 'first_name', 'last_name', 'bio', 'github', 'website', 'avatar']
 
     def __init__(self, *args, **kwargs):
-        
         self.user = kwargs.pop('user', None)
         super(ProfileForm, self).__init__(*args, **kwargs)
 
         if self.instance and self.instance.user:
             self.fields['username'].initial = self.instance.user.username
-            self.fields['email'].initial = self.instance.user.email
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
 
@@ -120,17 +135,10 @@ class ProfileForm(forms.ModelForm):
             raise ValidationError('This username is already taken.')
         return username
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exclude(pk=self.user.pk).exists():
-            raise ValidationError('This email is already in use.')
-        return email
-
     def save(self, commit=True):
         profile = super(ProfileForm, self).save(commit=False)
         user = self.user
         user.username = self.cleaned_data['username']
-        user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data.get('first_name', '')
         user.last_name = self.cleaned_data.get('last_name', '')
         if commit:
@@ -138,16 +146,23 @@ class ProfileForm(forms.ModelForm):
             profile.save()
         return profile
 
+
 class EmailChangeForm(forms.ModelForm):
     email = forms.EmailField(
         required=True,
         label='New Email',
-        widget=forms.EmailInput(attrs={'class': 'form-input'})
+        widget=forms.EmailInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-green-500',
+            'placeholder': 'New Email'
+        })
     )
     confirm_email = forms.EmailField(
         required=True,
         label='Confirm New Email',
-        widget=forms.EmailInput(attrs={'class': 'form-input'})
+        widget=forms.EmailInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-green-500',
+            'placeholder': 'Confirm New Email'
+        })
     )
 
     class Meta:
@@ -174,18 +189,19 @@ class JobPostForm(forms.ModelForm):
         fields = ['post_type', 'title', 'description']
         widgets = {
             'title': forms.TextInput(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md',
+                'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400',
                 'placeholder': 'Enter job title'
             }),
             'description': forms.Textarea(attrs={
-                'class': 'resize-none w-full px-3 py-2 border border-gray-300 rounded-md',
+                'class': 'resize-none w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400',
                 'rows': 4,
                 'placeholder': 'Enter job description'
             }),
             'post_type': forms.Select(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md'
+                'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400'
             }),
         }
+
 
 
 
@@ -195,18 +211,19 @@ class ForumPostForm(forms.ModelForm):
         fields = ['title', 'content', 'category']
         widgets = {
             'title': forms.TextInput(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400',
+                'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400',
                 'placeholder': 'Enter post title'
             }),
             'content': forms.Textarea(attrs={
-                'class': 'resize-none w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400',
+                'class': 'resize-none w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400',
                 'rows': 4,
                 'placeholder': 'Enter post content'
             }),
             'category': forms.Select(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400'
+                'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400'
             }),
         }
+
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -214,7 +231,8 @@ class CommentForm(forms.ModelForm):
         fields = ['content']
         widgets = {
             'content': forms.Textarea(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none',
-                'rows': 4
+                'class': 'w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none',
+                'rows': 4,
+                'placeholder': 'Write your comment here...'
             })
         }

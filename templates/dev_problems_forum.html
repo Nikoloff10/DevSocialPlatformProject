@@ -2,39 +2,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dev Problems and Discussions</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-900 min-h-screen text-gray-200">
     <div class="container mx-auto p-6">
         <div class="forum-header flex items-center justify-between mb-6">
-            <h1 class="text-4xl font-bold text-blue-600">Dev Problems and Discussions</h1>
+            <h1 class="text-4xl font-bold text-purple-400">Dev Problems and Discussions</h1>
             <div class="forum-buttons flex space-x-4">
-                <button onclick="location.href='/'" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors">
+                <button onclick="location.href='/'" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-colors">
                     Home
                 </button>
                 <button onclick="location.href=`{% url 'techy_nerds_forum' %}`" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors">
                     Techy Nerds
                 </button>
-                <button onclick="location.href=`{% url 'create_forum_post' %}`" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-colors">
+                <button onclick="location.href=`{% url 'create_forum_post' %}`" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors">
                     Start a New Discussion
                 </button>
             </div>
         </div>
-        <p class="forum-description text-lg text-gray-700 mb-8">
+        <p class="forum-description text-lg text-gray-400 mb-8">
             Discuss development problems and solutions as well as job offering posts here.
         </p>
         <div class="forum-posts grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for post in forum_posts %}
-                <div class="forum-post bg-white shadow-lg rounded-lg p-6 hover:shadow-2xl transition-shadow">
+                <div class="forum-post bg-gray-800 shadow-lg rounded-lg p-6 hover:shadow-2xl transition-shadow">
                     <h3 class="text-2xl font-semibold text-blue-500 hover:underline mb-2">
                         <a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a>
                     </h3>
-                    <p class="text-gray-600 mb-4">{{ post.content|truncatewords:30 }}</p>
+                    <p class="text-gray-300 mb-4">{{ post.content|truncatewords:30 }}</p>
                     <div class="text-sm text-gray-500 mb-2">
                         <strong>Posted by:</strong> 
                         {% if post.user %}
