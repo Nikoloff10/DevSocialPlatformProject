@@ -64,7 +64,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
-                <div class="bookmark-dropdown-content absolute right-0 mt-2 w-48 rounded-md bg-gray-600 z-50">
+                <div class="bookmark-dropdown-content absolute right-0 mt-2 w-48 rounded-md bg-gray-600 z-50 hidden">
                     <ul class="py-2">
                         {% for post in user.profile.bookmarked_posts.all %}
                             <li class="mb-1">
