@@ -195,5 +195,5 @@ SOCIAL_AUTH_GITHUB_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
 
 CSRF_TRUSTED_ORIGINS = [
     'https://devsearchey-g5dfdtcqg5cbcnab.italynorth-01.azurewebsites.net',
-    'http://devsearchey-g5dfdtcqg5cbcnab.italynorth-01.azurewebsites.net',
+    'https://127.0.0.1',
 ]
