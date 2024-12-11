@@ -22,7 +22,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 # Application definition
 
@@ -151,11 +151,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 
 MEDIA_URL = '/media/'
@@ -194,6 +196,5 @@ SOCIAL_AUTH_GITHUB_KEY = os.getenv('GITHUB_CLIENT_ID')
 SOCIAL_AUTH_GITHUB_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://devsearchey-g5dfdtcqg5cbcnab.italynorth-01.azurewebsites.net',
     'https://127.0.0.1',
 ]
