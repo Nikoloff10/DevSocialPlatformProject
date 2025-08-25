@@ -9,3 +9,6 @@ urlpatterns = [
     path('accounts/', include('devsearchey.allauth_urls')),
     path('', include('devsearchey.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Custom error handlers
+handler404 = 'devsearchey.views.custom_404_view'

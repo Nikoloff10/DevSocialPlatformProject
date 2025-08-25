@@ -62,3 +62,5 @@ Thumbs.db
 
 # Environment variables
 .env
+.env.docker
+.env.prod

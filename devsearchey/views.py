@@ -9,7 +9,6 @@ from django.views.generic import TemplateView
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DeleteView, UpdateView, CreateView, DetailView, View
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -465,3 +464,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
 #         login.token = token
 #         login.state = get_adapter(request).get_login_state(request)
 #         return complete_social_login(request, login)
+
+
+# Custom Error Handler Views
+def custom_404_view(request, exception):
+    """Custom 404 error handler"""
+    return render(request, '404.html', status=404)
